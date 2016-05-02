@@ -1,23 +1,30 @@
 package client;
 
+import server.Call;
+
 /**
  * Created by johan on 2016-04-28.
  */
 public class ClientInfo {
     private String name;
-    private boolean activeCall;
+    private Call call;
 
     public ClientInfo(String name){
         this.name = name;
-        activeCall = false;
+        call = null;
     }
 
-    public void setCallStatus(boolean bol){
-        activeCall = bol;
+
+    public void setCall(Call callID){
+        call = callID;
     }
 
-    public boolean getCallStatus(){
-        return activeCall;
+    public Call getCall(){
+        return call;
+    }
+
+    public void destroyCall(){
+        call = null;
     }
 
     public String getName(){

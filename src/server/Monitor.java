@@ -33,6 +33,10 @@ public class Monitor {
 
     }
 
+    public void putMessage(Message msg){
+        messages.add(msg);
+    }
+
 
     public ArrayList<Participant> getCallParticipants(ArrayList<String> callList) {
         ArrayList<Participant> participantToCall = new ArrayList<Participant>();
@@ -72,7 +76,11 @@ public class Monitor {
     }
 
     public void acceptCall(Message msg) {
-        // Ej påbörjad
+        for(Participant p : msg.getCall().getParticipants()){
+            if(p.getName().equals(msg.getSender())){
+                msg.getCall().getAcceptedCallList().add(p);
+            }
+        }
     }
 
     public void closeCall(Message msg) {
@@ -83,8 +91,16 @@ public class Monitor {
                 }
             }
 
+            for(Participant p : c.getAcceptedCallList()){
+                if(p.getName().equals(msg.getSender())){
+                    c.getAcceptedCallList().remove(p);
+                }
+            }
+
         }
     }
+
+
 
     public void closeConnection(Message msg) {
         for (Participant p : participants) {

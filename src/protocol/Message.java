@@ -51,6 +51,10 @@ public class Message {
         return sender;
     }
 
+    public Call getCall(){
+        return call;
+    }
+
     public ArrayList<String> getCallList(){
         return peopleToCall;
     }
