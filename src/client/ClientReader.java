@@ -10,9 +10,11 @@ import java.util.Scanner;
 
 public class ClientReader extends Thread {
     private Socket s;
+    private ClientMonitor mon;
 
-    public ClientReader(Socket s) {
+    public ClientReader(ClientMonitor mon, Socket s) {
         this.s = s;
+        this.mon = mon;
     }
 
     public void run() {

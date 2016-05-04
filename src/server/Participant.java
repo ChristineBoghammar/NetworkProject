@@ -7,6 +7,7 @@ import java.net.Socket;
  */
 public class Participant {
     private String name;
+    private Call call;
     private Socket s;
 
     public Participant(String name, Socket s){
@@ -20,5 +21,13 @@ public class Participant {
 
     public Socket getSocket(){
         return s;
+    }
+
+    public void setCall(Call call){
+        this.call = call;
+    }
+
+    public void endCall(){
+        this.call = null;
     }
 }
