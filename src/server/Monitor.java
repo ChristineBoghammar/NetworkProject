@@ -101,12 +101,13 @@ public class Monitor {
     public synchronized void requestCall(Action action) {
         ArrayList<Participant> activeCallList = new ArrayList<Participant>();
         activeCallList.add(getParticipant(action.getSender()));
-        activeCalls.add(new Call(activeCallList, uniqueID++));
-        //Här måste ett Call object med ett motsvarande action object skapas för att skickas ut till "callList"
+        Call c = new Call(activeCallList, uniqueID++);
+        activeCalls.add(c);
+        Action reqAction = new Action(action.getContent(), action.getSender(), action.getCmd(), c.getID());
         for (Participant p : getCallParticipants(action.getCallList())) {
             try {
                 ObjectOutputStream oos = new ObjectOutputStream(p.getSocket().getOutputStream());
-                oos.writeObject(action);
+                oos.writeObject(reqAction);
             } catch (IOException e) {
                 e.printStackTrace();
             }
