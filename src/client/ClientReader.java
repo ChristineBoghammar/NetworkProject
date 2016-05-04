@@ -10,7 +10,7 @@ import java.util.Scanner;
 
 public class ClientReader extends Thread {
     private Socket s;
-    private ClientMonitor mon;
+    private client.ClientMonitor mon;
 
     public ClientReader(ClientMonitor mon, Socket s) {
         this.s = s;

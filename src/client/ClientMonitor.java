@@ -70,4 +70,10 @@ public class ClientMonitor {
          * En person som förfrågades ett samtal har accepterat. Notifiera klienten via GUI
          */
     }
+
+    public void rejectCall(Action action) {
+        /**
+         * En förfrågad person nekar ett samtal
+         */
+    }
 }

@@ -34,7 +34,7 @@ public class ClientWriter extends Thread {
                     mon.acceptCall(action);
                     break;
                 case 4:
-//                    mon.closeCall(action);
+                    mon.rejectCall(action);
                     break;
                 case 5:
 //                    mon.sendToCall(action);
