@@ -1,7 +1,10 @@
 package server;
 
-import client.ClientInfo;
-import protocol.Message;
+import protocol.Action;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.net.Socket;
 
 /**
  * Created by christineboghammar on 18/04/16.
@@ -10,14 +13,25 @@ import protocol.Message;
 
 public class ServerReader extends Thread {
     private Monitor mon;
-    private ClientInfo info;
+    private Socket socket;
 
-    public ServerReader(Monitor mon, ClientInfo info) {
+    public ServerReader(Monitor mon, Socket connection) {
         this.mon = mon;
-        this.info = info;
+        this.socket = connection;
     }
 
     public void run() {
-        //Kolla på Client ur labb 3. Ska skapa meddelanden för utskick till monitor
+        try {
+            ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+            Action action = null;
+            while ((action = ((Action) in.readObject())) != null) {
+                mon.putMessage(action);
+            }
+        } catch (IOException e) {
+
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
     }
 }

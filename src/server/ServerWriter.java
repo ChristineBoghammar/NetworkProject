@@ -1,41 +1,42 @@
 package server;
 
-import client.ClientInfo;
-import com.sun.corba.se.spi.activation.Server;
-import protocol.Message;
+import protocol.Action;
+
+import java.net.Socket;
 
 /**
  * Created by johan on 2016-04-28.
  */
 public class ServerWriter extends Thread  {
     private Monitor mon;
-    private ClientInfo info;
+    private Socket socket;
 
-    public ServerWriter(Monitor mon, ClientInfo info){
+    public ServerWriter(Monitor mon, Socket socket){
         this.mon = mon;
-        this.info = info;
     }
 
     public void run(){
         while (true) {
-            Message msg = mon.getMessage();
-            switch (msg.getCmd()) {
+            Action action = mon.getMessage();
+            switch (action.getCmd()) {
                 case 0:
-                    mon.requestCall(msg);
+                    mon.connectClient(action, socket);
                     break;
                 case 1:
-                    mon.acceptCall(msg);
+                    mon.disconnectClient(action);
                     break;
                 case 2:
-                    mon.closeCall(msg);
+                    mon.requestCall(action);
                     break;
 
                 case 3:
-                    mon.sendToCall(msg.getMsg(), info.getCall());
+                    mon.acceptCall(action);
                     break;
-
                 case 4:
-                    mon.closeConnection(msg);
+                    mon.closeCall(action);
+                    break;
+                case 5:
+                    mon.sendToCall(action);
             }
         }
     }

@@ -15,6 +15,7 @@ public class ClientMain {
             Socket s;
             try {
                 s = new Socket(arg0, arg1);
+                ClientInfo ci = new ClientInfo("Test", s);
                 ClientReader listener = new ClientReader(s);
                 listener.start();
                 Scanner keyboard = new Scanner(System.in);
