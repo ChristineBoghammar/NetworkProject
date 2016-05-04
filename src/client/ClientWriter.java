@@ -1,29 +1,30 @@
-package server;
+package client;
 
 import protocol.Action;
 
 import java.net.Socket;
 
 /**
- * Created by johan on 2016-04-28.
+ * Created by johan on 2016-05-04.
  */
-public class ServerWriter extends Thread  {
-    private ServerMonitor mon;
+public class ClientWriter extends Thread {
     private Socket socket;
+    private ClientMonitor mon;
 
-    public ServerWriter(ServerMonitor mon, Socket socket){
+    public ClientWriter(ClientMonitor mon, Socket socket){
+        this.socket = socket;
         this.mon = mon;
     }
 
     public void run(){
         while (true) {
-            Action action = mon.getMessage();
+            Action action = mon.getAction();
             switch (action.getCmd()) {
                 case 0:
-                    mon.connectClient(action, socket);
+
                     break;
                 case 1:
-                    mon.disconnectClient(action);
+
                     break;
                 case 2:
                     mon.requestCall(action);
@@ -33,15 +34,13 @@ public class ServerWriter extends Thread  {
                     mon.acceptCall(action);
                     break;
                 case 4:
-                    mon.closeCall(action);
+//                    mon.closeCall(action);
                     break;
                 case 5:
-                    mon.sendToCall(action);
-                    break;
-                case 6:
-                    mon.rejectCall(action);
+//                    mon.sendToCall(action);
             }
         }
     }
+
 
 }

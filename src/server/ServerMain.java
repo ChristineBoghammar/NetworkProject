@@ -10,7 +10,7 @@ import java.net.Socket;
 public class ServerMain {
 
     public static void main(String args[]) {
-        Monitor mon = new Monitor();
+        ServerMonitor mon = new ServerMonitor();
 
         try (ServerSocket server = new ServerSocket(30000)) {
             while (true) {

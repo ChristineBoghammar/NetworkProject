@@ -12,10 +12,10 @@ import java.net.Socket;
 
 
 public class ServerReader extends Thread {
-    private Monitor mon;
+    private ServerMonitor mon;
     private Socket socket;
 
-    public ServerReader(Monitor mon, Socket connection) {
+    public ServerReader(ServerMonitor mon, Socket connection) {
         this.mon = mon;
         this.socket = connection;
     }

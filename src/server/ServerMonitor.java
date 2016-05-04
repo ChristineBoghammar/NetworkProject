@@ -11,13 +11,13 @@ import java.util.LinkedList;
 /**
  * Created by christineboghammar on 18/04/16.
  */
-public class Monitor {
+public class ServerMonitor {
     private LinkedList<Action> actions;
     private ArrayList<Participant> participants;
     private ArrayList<Call> activeCalls;
     private int uniqueID = 0;
 
-    public Monitor() {
+    public ServerMonitor() {
         this.actions = new LinkedList<Action>();
         this.participants = new ArrayList<Participant>();
 
@@ -36,37 +36,37 @@ public class Monitor {
 
     }
 
-    public synchronized void putMessage(Action action){
+    public synchronized void putMessage(Action action) {
         actions.add(action);
     }
 
-    public synchronized void addParticipant(Participant p){
+    public synchronized void addParticipant(Participant p) {
         participants.add(p);
     }
 
-    public synchronized  ArrayList<Participant> getParticipants(){
+    public synchronized ArrayList<Participant> getParticipants() {
         return participants;
     }
 
-    public synchronized  Participant getParticipant(String name){
-        for(Participant p : participants){
-            if(p.getName().equals(name)){
+    public synchronized Participant getParticipant(String name) {
+        for (Participant p : participants) {
+            if (p.getName().equals(name)) {
                 return p;
             }
         }
         return null;
     }
 
-    public synchronized Call getCall(int id){
-        for(Call c : activeCalls){
-            if(c.getID() == id){
+    public synchronized Call getCall(int id) {
+        for (Call c : activeCalls) {
+            if (c.getID() == id) {
                 return c;
             }
         }
         return null;
     }
 
-    public synchronized void connectClient(Action action, Socket socket){
+    public synchronized void connectClient(Action action, Socket socket) {
         participants.add(new Participant(action.getSender(), socket));
     }
 
@@ -116,8 +116,18 @@ public class Monitor {
     }
 
     public synchronized void acceptCall(Action action) {
-        for(Participant p : getCall(action.getCallID()).getParticipants()){
-            if(p.getName().equals(action.getSender())){
+        for (Participant p : getCall(action.getCallID()).getParticipants()) {
+            if (p.getName().equals(action.getSender())) {
+                if (getCall(action.getCallID()).getAcceptedCallList().size() > 0) {
+                    for (Participant acceptP : getCall(action.getCallID()).getAcceptedCallList()) {
+                        try {
+                            ObjectOutputStream oos = new ObjectOutputStream(p.getSocket().getOutputStream());
+                            oos.writeObject(action);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
                 getCall(action.getCallID()).getAcceptedCallList().add(p);
             }
         }
@@ -125,21 +135,20 @@ public class Monitor {
 
     public synchronized void closeCall(Action action) {
         for (Call c : activeCalls) {
-            for(Participant p : c.getParticipants()){
-                if(p.getName().equals(action.getSender())){
+            for (Participant p : c.getParticipants()) {
+                if (p.getName().equals(action.getSender())) {
                     c.getParticipants().remove(p);
                 }
             }
 
-            for(Participant p : c.getAcceptedCallList()){
-                if(p.getName().equals(action.getSender())){
+            for (Participant p : c.getAcceptedCallList()) {
+                if (p.getName().equals(action.getSender())) {
                     c.getAcceptedCallList().remove(p);
                 }
             }
 
         }
     }
-
 
 
     public synchronized void closeConnection(Action action) {
@@ -150,4 +159,9 @@ public class Monitor {
         }
     }
 
+//    public void rejectCall(Action action) {
+//        for (Participant p : participants) {
+//            if ()
+//        }
+//    }
 }

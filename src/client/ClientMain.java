@@ -1,35 +1,41 @@
 package client;
 
 import java.io.IOException;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Scanner;
 
 
 public class ClientMain {
+    public static String host = "localhost";
+    public static int port = 30000;
 
     public static void main(String args[]) {
         if (args.length == 2) {
-            String arg0 = args[0];
-            int arg1 = Integer.parseInt(args[1]);
-            Socket s;
-            try {
-                s = new Socket(arg0, arg1);
-                ClientInfo ci = new ClientInfo("Test", s);
-                ClientReader listener = new ClientReader(s);
-                listener.start();
-                Scanner keyboard = new Scanner(System.in);
-                while(true){
-                    String line = keyboard.nextLine();
-                    s.getOutputStream().write(line.getBytes());
-                    s.getOutputStream().write('\n');
-
-                }
-
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
+            host = args[0];
+            port = Integer.parseInt(args[1]);
 
         }
+
+        Socket s;
+        try {
+            Scanner keyboard = new Scanner(System.in);
+            System.out.print("Enter your name:" + "\n");
+            String name = keyboard.nextLine();
+
+            s = new Socket(host, port);
+            ClientMonitor mon = new ClientMonitor(name, s);
+            ClientReader cr = new ClientReader(mon, s);
+            ClientWriter cw = new ClientWriter(mon, s);
+            cr.start();
+            cw.start();
+            /**
+             * Här kommer GUIt ligga :) <3 :D :p
+             */
+
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+
     }
 }
+
