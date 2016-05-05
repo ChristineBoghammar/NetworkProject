@@ -24,7 +24,7 @@ public class ServerMonitor {
     private final int CLOSE_CALL = 4;
     private final int COMMUNICATE_TO_CALL = 5;
     private final int RECIEVE_REQUESTED_CALL = 6;
-    private final int REJECT_
+    private final int REJECT_REQUESTED_CALL = 7;
 
     /**
      * Possible cmd's are:
@@ -206,7 +206,6 @@ public class ServerMonitor {
             }
         }
     }
-
 
     public synchronized void closeConnection(Action action) {
         for (Participant p : participants) {
