@@ -16,6 +16,7 @@ public class ServerMain {
             while (true) {
                 try {
                     Socket connection = server.accept();
+                    System.out.println("Socket accepted");
                     new ServerReader(mon, connection).start();
                     new ServerWriter(mon, connection).start();
 

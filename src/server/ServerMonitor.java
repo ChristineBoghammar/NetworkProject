@@ -20,7 +20,7 @@ public class ServerMonitor {
     public ServerMonitor() {
         this.actions = new LinkedList<Action>();
         this.participants = new ArrayList<Participant>();
-
+        this.activeCalls = new ArrayList<Call>();
     }
 
 
@@ -38,6 +38,7 @@ public class ServerMonitor {
 
     public synchronized void putMessage(Action action) {
         actions.add(action);
+        notifyAll();
     }
 
     public synchronized void addParticipant(Participant p) {
@@ -57,6 +58,15 @@ public class ServerMonitor {
         return null;
     }
 
+    public synchronized Participant getParticipant(Socket s) {
+        for (Participant p : participants) {
+            if (p.getSocket().equals(s)) {
+                return p;
+            }
+        }
+        return null;
+    }
+
     public synchronized Call getCall(int id) {
         for (Call c : activeCalls) {
             if (c.getID() == id) {
@@ -68,6 +78,8 @@ public class ServerMonitor {
 
     public synchronized void connectClient(Action action, Socket socket) {
         participants.add(new Participant(action.getSender(), socket));
+        System.out.println("Client connected: " + action.getSender());
+        System.out.println(participants.size());
     }
 
     public void disconnectClient(Action action) {

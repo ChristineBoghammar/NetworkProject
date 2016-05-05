@@ -3,6 +3,8 @@ package client;
 import protocol.Action;
 import server.Call;
 
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.LinkedList;
 
@@ -12,34 +14,40 @@ import java.util.LinkedList;
 public class ClientMonitor {
     private LinkedList<Action> actions;
     private String name;
-    private Call call;
     private Socket socket;
+    private int callID;
+    private ObjectOutputStream oos;
 
     public ClientMonitor(String name, Socket s) {
         this.actions = new LinkedList<Action>();
         this.name = name;
         this.socket = s;
-        call = null;
+        callID = -1;
+        try {
+            oos = new ObjectOutputStream(s.getOutputStream());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
-    public void setCall(Call callID) {
-        call = callID;
+    public synchronized void setCallID(int callID) {
+        this.callID  = callID;
     }
 
-    public Call getCall() {
-        return call;
+    public synchronized int getCallID() {
+        return callID;
     }
 
-    public void destroyCall() {
-        call = null;
+    public synchronized void destroyCall() {
+        callID = -1;
     }
 
-    public Socket getSocket() {
+    public synchronized Socket getSocket() {
         return socket;
     }
 
-    public String getName() {
+    public synchronized String getName() {
         return name;
     }
 
@@ -57,17 +65,42 @@ public class ClientMonitor {
 
     public synchronized void putAction(Action action){
         actions.add(action);
+        System.out.println("PutAction: " + "cmd: " + action.getCmd() + " content: " + action.getContent() + " sender: " + action.getSender() + " callId: " + action.getCallID());
+        notifyAll();
     }
 
-    public void requestCall(Action action) {
+    public synchronized void requestCall(Action action) {
         /**
          * Någon försöker starta ett samtal med denna client. Lösning är att godkänna eller neka. Görs via GUI.
          */
+            try {
+                oos.writeObject(action);
+                System.out.println("ReqeuestCall Action written to server");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        System.out.println("cmd: " + action.getCmd() + " content: " + action.getContent() + " sender: " + action.getSender() + " callId: " + action.getCallID());
     }
 
-    public void acceptCall(Action action) {
+    public synchronized void acceptCall(Action action) {
         /**
          * En person som förfrågades ett samtal har accepterat. Notifiera klienten via GUI
          */
+
+        System.out.println("cmd: " + action.getCmd() + " content: " + action.getContent() + " sender: " + action.getSender() + " callId: " + action.getCallID());
+
+    }
+
+    public synchronized void sendToCall(Action action) {
+        System.out.println("cmd: " + action.getCmd() + " content: " + action.getContent() + " sender: " + action.getSender() + " callId: " + action.getCallID());
+    }
+
+    public synchronized void connectClient(Action action) {
+        try {
+            oos.writeObject(action);
+            System.out.println("connectClient Action written to server");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

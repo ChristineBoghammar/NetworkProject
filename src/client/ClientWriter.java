@@ -11,6 +11,7 @@ public class ClientWriter extends Thread {
     private Socket socket;
     private ClientMonitor mon;
 
+
     public ClientWriter(ClientMonitor mon, Socket socket){
         this.socket = socket;
         this.mon = mon;
@@ -19,9 +20,10 @@ public class ClientWriter extends Thread {
     public void run(){
         while (true) {
             Action action = mon.getAction();
+            System.out.printf("Action polled: " + action.getSender() + " " + action.getSender());
             switch (action.getCmd()) {
                 case 0:
-
+                    mon.connectClient(action);
                     break;
                 case 1:
 
@@ -37,7 +39,7 @@ public class ClientWriter extends Thread {
 //                    mon.closeCall(action);
                     break;
                 case 5:
-//                    mon.sendToCall(action);
+                    mon.sendToCall(action);
             }
         }
     }

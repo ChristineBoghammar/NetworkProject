@@ -1,5 +1,7 @@
 package client;
 
+import protocol.Action;
+
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Scanner;
@@ -28,6 +30,7 @@ public class ClientMain {
             ClientWriter cw = new ClientWriter(mon, s);
             cr.start();
             cw.start();
+
             /**
              * Här kommer GUIt ligga :) <3 :D :p
              */
