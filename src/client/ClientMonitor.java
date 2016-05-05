@@ -75,11 +75,11 @@ public class ClientMonitor {
          */
             try {
                 oos.writeObject(action);
-                System.out.println("ReqeuestCall Action written to server");
+                System.out.println("RequestCall Action written to server");
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        System.out.println("cmd: " + action.getCmd() + " content: " + action.getContent() + " sender: " + action.getSender() + " callId: " + action.getCallID());
+        System.out.println("cmd: " + action.getCmd() + " content: " + action.getContent() + " sender: " + action.getSender() + " callId: " + action.getCallList());
     }
 
     public synchronized void acceptCall(Action action) {

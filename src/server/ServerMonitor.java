@@ -77,8 +77,8 @@ public class ServerMonitor {
     }
 
     public synchronized void connectClient(Action action, Socket socket) {
-        participants.add(new Participant(action.getSender(), socket));
-        System.out.println("Client connected: " + action.getSender());
+        participants.add(new Participant(action.getSender().toLowerCase(), socket));
+        System.out.println("Client connected: " + action.getSender().toLowerCase());
         System.out.println(participants.size());
     }
 
@@ -90,7 +90,7 @@ public class ServerMonitor {
         ArrayList<Participant> participantToCall = new ArrayList<Participant>();
         for (String name : callList) {
             for (Participant p : participants) {
-                if (name.equals(p.getName())) {
+                if (name.toLowerCase().equals(p.getName().toLowerCase())) {
                     participantToCall.add(p);
                 }
             }
@@ -111,15 +111,19 @@ public class ServerMonitor {
 
 
     public synchronized void requestCall(Action action) {
+        System.out.println("Got to requestCall");
         ArrayList<Participant> activeCallList = new ArrayList<Participant>();
         activeCallList.add(getParticipant(action.getSender()));
         Call c = new Call(activeCallList, uniqueID++);
         activeCalls.add(c);
         Action reqAction = new Action(action.getContent(), action.getSender(), action.getCmd(), c.getID());
         for (Participant p : getCallParticipants(action.getCallList())) {
+            System.out.println("Found ho/ha");
             try {
                 ObjectOutputStream oos = new ObjectOutputStream(p.getSocket().getOutputStream());
                 oos.writeObject(reqAction);
+                System.out.println("Wrote object to them");
+
             } catch (IOException e) {
                 e.printStackTrace();
             }

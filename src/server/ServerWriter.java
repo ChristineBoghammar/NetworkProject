@@ -13,6 +13,7 @@ public class ServerWriter extends Thread  {
 
     public ServerWriter(ServerMonitor mon, Socket socket){
         this.mon = mon;
+        this.socket = socket;
     }
 
     public void run(){
