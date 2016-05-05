@@ -40,7 +40,7 @@ public class ServerWriter extends Thread  {
                     mon.sendToCall(action);
                     break;
                 case 6:
-//                    mon.rejectCall(action);
+                    mon.rejectCall(action);
             }
         }
     }

@@ -20,36 +20,25 @@ public class ClientReader extends Thread {
     }
 
     public void run() {
-        if(!connected){
-            String name = mon.getName();
-            mon.putAction(new Action(name, name, 0, -1));
-        }
-//        try {
-//            ObjectInputStream in = new ObjectInputStream(s.getInputStream());
-//            Action action = null;
+        try {
+            ObjectInputStream in = new ObjectInputStream(s.getInputStream());
+            Action action = null;
             /**
              * Det som står nedan skall gälla egentligen. Testar bara med egna inputs
              */
-//            while ((action = ((Action) in.readObject())) != null) {
-//                mon.putAction(action);
-//            }
-            Scanner keyboard = new Scanner(System.in);
-            while(true){
-                System.out.print("Write a Command: " + "\n");
-                String line = keyboard.nextLine();
-                String[] actionArgs = line.split("-");
-                ArrayList<String> e = new ArrayList<String>();
-                e.add(actionArgs[3]);
-                mon.putAction(new Action(actionArgs[0], actionArgs[1], Integer.parseInt(actionArgs[2]), e));
-
-
+            try {
+                while ((action = ((Action) in.readObject())) != null) {
+                    mon.putAction(action);
+                }
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
             }
 
 
-//        } catch (IOException e) {
-//            System.err.print("IOException in ClientReader for client: " + mon.getName() + "\n");
-//
-//        }
+        } catch (IOException e) {
+            System.err.print("IOException in ClientReader for client: " + mon.getName() + "\n");
+
+        }
     }
 
 }

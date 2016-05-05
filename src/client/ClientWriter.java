@@ -20,7 +20,8 @@ public class ClientWriter extends Thread {
     public void run(){
         while (true) {
             Action action = mon.getAction();
-            System.out.printf("Action polled: " + action.getSender() + " " + action.getSender());
+            System.out.println("Action polled: " + action.getSender() + " " + action.getSender());
+
             switch (action.getCmd()) {
                 case 0:
                     mon.connectClient(action);
@@ -40,6 +41,10 @@ public class ClientWriter extends Thread {
                     break;
                 case 5:
                     mon.sendToCall(action);
+                    break;
+                case 6:
+                    mon.recieveRequest(action);
+                    break;
             }
         }
     }

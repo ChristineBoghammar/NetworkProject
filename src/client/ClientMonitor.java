@@ -109,4 +109,8 @@ public class ClientMonitor {
          * En förfrågad person nekar ett samtal
          */
     }
+
+    public void recieveRequest(Action action) {
+        System.out.println("Received requested call:" + action.getSender() + " " + action.getCmd());
+    }
 }

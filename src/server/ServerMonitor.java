@@ -82,7 +82,7 @@ public class ServerMonitor {
         System.out.println(participants.size());
     }
 
-    public void disconnectClient(Action action) {
+    public synchronized void disconnectClient(Action action) {
         participants.remove(getParticipant(action.getSender()));
     }
 
@@ -116,7 +116,8 @@ public class ServerMonitor {
         activeCallList.add(getParticipant(action.getSender()));
         Call c = new Call(activeCallList, uniqueID++);
         activeCalls.add(c);
-        Action reqAction = new Action(action.getContent(), action.getSender(), action.getCmd(), c.getID());
+        Action reqAction = new Action(action.getContent(), action.getSender(), 6, c.getID());
+        System.out.println(reqAction.getContent() + " " + reqAction.getSender() + " " + reqAction.getCmd() + " " + reqAction.getCallID());
         for (Participant p : getCallParticipants(action.getCallList())) {
             System.out.println("Found ho/ha");
             try {

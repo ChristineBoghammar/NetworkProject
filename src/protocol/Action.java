@@ -24,6 +24,7 @@ public class Action implements Serializable {
      * 3 - Accept call
      * 4 - Close call
      * 5 - Communication via call
+     * 6 - Receive requested Call
      */
     public Action(String content, String sender, int cmd, int callID){
         this.content=content;
