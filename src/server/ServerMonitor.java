@@ -99,7 +99,7 @@ public class ServerMonitor {
     }
 
     public synchronized void sendToCall(Action action) {
-        for (Participant p : getCall(action.getCallID()).getParticipants()) {
+        for (Participant p : getCall(action.getCallID()).getAcceptedCallList()) {
             try {
                 p.getSocket().getOutputStream().write(action.getContent().getBytes());
             } catch (IOException e) {
@@ -128,7 +128,10 @@ public class ServerMonitor {
     }
 
     public synchronized void acceptCall(Action action) {
-        for (Participant p : getCall(action.getCallID()).getParticipants()) {
+        Call actualCall = getCall(action.getCallID());
+        ArrayList<Participant> callList = actualCall.getAcceptedCallList();
+
+        for (Participant p : actualCall.getInvitedParticipants()) {
             if (p.getName().equals(action.getSender())) {
                 if (getCall(action.getCallID()).getAcceptedCallList().size() > 0) {
                     for (Participant acceptP : getCall(action.getCallID()).getAcceptedCallList()) {
@@ -146,19 +149,15 @@ public class ServerMonitor {
     }
 
     public synchronized void closeCall(Action action) {
-        for (Call c : activeCalls) {
-            for (Participant p : c.getParticipants()) {
-                if (p.getName().equals(action.getSender())) {
-                    c.getParticipants().remove(p);
-                }
-            }
+        Call call = getCall(action.getCallID());
 
-            for (Participant p : c.getAcceptedCallList()) {
-                if (p.getName().equals(action.getSender())) {
-                    c.getAcceptedCallList().remove(p);
-                }
+        for (Participant p : call.getAcceptedCallList()) {
+            if (p.getName().equals(action.getSender())) {
+                call.getAcceptedCallList().remove(p);
+                    /*
+                    Här måste vi hantera de "participants" som ännu inte har accepterat eller nekat detta samtal
+                     */
             }
-
         }
     }
 
@@ -171,9 +170,24 @@ public class ServerMonitor {
         }
     }
 
-//    public void rejectCall(Action action) {
-//        for (Participant p : participants) {
-//            if ()
-//        }
-//    }
+    public void rejectCall(Action action) {
+        Call actualCall = getCall(action.getCallID());
+        ArrayList<Participant> callList = actualCall.getAcceptedCallList();
+
+        for (Participant p : callList) {
+            if (p.getName().equals(action.getSender())) {
+                if (callList.size() > 0) {
+                    for (Participant acceptP : callList) {
+                        try {
+                            ObjectOutputStream oos = new ObjectOutputStream(p.getSocket().getOutputStream());
+                            oos.writeObject(action);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                callList.add(p);
+            }
+        }
+    }
 }

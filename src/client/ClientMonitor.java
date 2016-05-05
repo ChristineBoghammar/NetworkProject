@@ -103,4 +103,10 @@ public class ClientMonitor {
             e.printStackTrace();
         }
     }
+
+    public void rejectCall(Action action) {
+        /**
+         * En förfrågad person nekar ett samtal
+         */
+    }
 }
