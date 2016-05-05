@@ -24,6 +24,7 @@ public class ServerMonitor {
     private final int CLOSE_CALL = 4;
     private final int COMMUNICATE_TO_CALL = 5;
     private final int RECIEVE_REQUESTED_CALL = 6;
+    private final int REJECT_
 
     /**
      * Possible cmd's are:
@@ -172,6 +173,27 @@ public class ServerMonitor {
         }
     }
 
+    public void rejectCall(Action action) {
+        Call actualCall = getCall(action.getCallID());
+        ArrayList<Participant> callList = actualCall.getAcceptedCallList();
+
+        for (Participant p : callList) {
+            if (p.getName().equals(action.getSender())) {
+                if (callList.size() > 0) {
+                    for (Participant acceptP : callList) {
+                        try {
+                            ObjectOutputStream oos = new ObjectOutputStream(p.getSocket().getOutputStream());
+                            oos.writeObject(action);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                callList.add(p);
+            }
+        }
+    }
+
     public synchronized void closeCall(Action action) {
         Call call = getCall(action.getCallID());
 
@@ -194,24 +216,5 @@ public class ServerMonitor {
         }
     }
 
-    public void rejectCall(Action action) {
-        Call actualCall = getCall(action.getCallID());
-        ArrayList<Participant> callList = actualCall.getAcceptedCallList();
 
-        for (Participant p : callList) {
-            if (p.getName().equals(action.getSender())) {
-                if (callList.size() > 0) {
-                    for (Participant acceptP : callList) {
-                        try {
-                            ObjectOutputStream oos = new ObjectOutputStream(p.getSocket().getOutputStream());
-                            oos.writeObject(action);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-                callList.add(p);
-            }
-        }
-    }
 }
