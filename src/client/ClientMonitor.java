@@ -17,6 +17,24 @@ public class ClientMonitor {
     private Socket socket;
     private int callID;
     private ObjectOutputStream oos;
+    private final int CONNECT = 0;
+    private final int DISCONNECT = 1;
+    private final int INITIATE_CALL = 2;
+    private final int ACCEPT_CALL = 3;
+    private final int CLOSE_CALL = 4;
+    private final int COMMUNICATE_TO_CALL = 5;
+    private final int RECIEVE_REQUESTED_CALL = 6;
+
+    /**
+     * Possible cmd's are:
+     * 0 - Connect to server
+     * 1 - Disconnect from server
+     * 2 - Initiate call
+     * 3 - Accept call
+     * 4 - Close call
+     * 5 - Communication via call
+     * 6 - Receive requested Call
+     */
 
     public ClientMonitor(String name, Socket s) {
         this.actions = new LinkedList<Action>();
@@ -32,7 +50,7 @@ public class ClientMonitor {
 
 
     public synchronized void setCallID(int callID) {
-        this.callID  = callID;
+        this.callID = callID;
     }
 
     public synchronized int getCallID() {
@@ -63,7 +81,7 @@ public class ClientMonitor {
 
     }
 
-    public synchronized void putAction(Action action){
+    public synchronized void putAction(Action action) {
         actions.add(action);
         System.out.println("PutAction: " + "cmd: " + action.getCmd() + " content: " + action.getContent() + " sender: " + action.getSender() + " callId: " + action.getCallID());
         notifyAll();
@@ -73,12 +91,12 @@ public class ClientMonitor {
         /**
          * Någon försöker starta ett samtal med denna client. Lösning är att godkänna eller neka. Görs via GUI.
          */
-            try {
-                oos.writeObject(action);
-                System.out.println("RequestCall Action written to server");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        try {
+            oos.writeObject(action);
+            System.out.println("RequestCall Action written to server");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         System.out.println("cmd: " + action.getCmd() + " content: " + action.getContent() + " sender: " + action.getSender() + " callId: " + action.getCallList());
     }
 
@@ -104,13 +122,47 @@ public class ClientMonitor {
         }
     }
 
-    public void rejectCall(Action action) {
+    public synchronized void rejectCall(Action action) {
         /**
          * En förfrågad person nekar ett samtal
          */
     }
 
-    public void recieveRequest(Action action) {
-        System.out.println("Received requested call:" + action.getSender() + " " + action.getCmd());
+    public synchronized void recieveRequest(Action action) {
+        /**
+         * Om användaren godkänner samtalet
+         */
+        callID = action.getCallID();
+        Action response = new Action("y", getName(), ACCEPT_CALL, action.getCallID());
+        try {
+            oos.writeObject(response);
+            System.out.println("connectClient Action written to server");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        /**
+         * Om användaren ej godkänner samtalet
+         */
+//        Action response = new Action("y",getName(), ACCEPT_CALL, action.getCallID());
+//        try {
+//            oos.writeObject(response);
+//            System.out.println("connectClient Action written to server");
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+        /**
+         * Om användaren är upptagen
+         *
+         */
+//        Action response = new Action("b",getName(), ACCEPT_CALL, action.getCallID());
+//        try {
+//            oos.writeObject(response);
+//            System.out.println("connectClient Action written to server");
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+
     }
 }
+

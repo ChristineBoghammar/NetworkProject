@@ -40,7 +40,6 @@ public class ClientMain {
                 ArrayList<String> e = new ArrayList<String>();
                 e.add(actionArgs[3]);
                 mon.putAction(new Action(actionArgs[0], actionArgs[1], Integer.parseInt(actionArgs[2]), e));
-
             }
             /**
              * Här kommer GUIt ligga :) <3 :D :p

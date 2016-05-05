@@ -17,6 +17,25 @@ public class ServerMonitor {
     private ArrayList<Call> activeCalls;
     private int uniqueID = 0;
 
+    private final int CONNECT = 0;
+    private final int DISCONNECT = 1;
+    private final int INITIATE_CALL = 2;
+    private final int ACCEPT_CALL = 3;
+    private final int CLOSE_CALL = 4;
+    private final int COMMUNICATE_TO_CALL = 5;
+    private final int RECIEVE_REQUESTED_CALL = 6;
+
+    /**
+     * Possible cmd's are:
+     * 0 - Connect to server
+     * 1 - Disconnect from server
+     * 2 - Initiate call
+     * 3 - Accept call
+     * 4 - Close call
+     * 5 - Communication via call
+     * 6 - Receive requested Call
+     */
+
     public ServerMonitor() {
         this.actions = new LinkedList<Action>();
         this.participants = new ArrayList<Participant>();
@@ -116,7 +135,7 @@ public class ServerMonitor {
         activeCallList.add(getParticipant(action.getSender()));
         Call c = new Call(activeCallList, uniqueID++);
         activeCalls.add(c);
-        Action reqAction = new Action(action.getContent(), action.getSender(), 6, c.getID());
+        Action reqAction = new Action(action.getContent(), action.getSender(), RECIEVE_REQUESTED_CALL, c.getID());
         System.out.println(reqAction.getContent() + " " + reqAction.getSender() + " " + reqAction.getCmd() + " " + reqAction.getCallID());
         for (Participant p : getCallParticipants(action.getCallList())) {
             System.out.println("Found ho/ha");
