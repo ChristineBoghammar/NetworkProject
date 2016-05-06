@@ -25,6 +25,8 @@ public class ClientWriter extends Thread {
     private final int COMMUNICATE_TO_CALL = 5;
     private final int RECIEVE_REQUESTED_CALL = 6;
     private final int REJECT_CALL = 7;
+    private final int RECIEVE_CLOSE_CALL = 8;
+    private final int RECIEVE_CALL_ID = 9;
 
 
     public void run(){
@@ -58,6 +60,11 @@ public class ClientWriter extends Thread {
                 case REJECT_CALL:
                     mon.rejectCall(action);
                     break;
+                case RECIEVE_CLOSE_CALL:
+                    mon.receiveCloseCall(action);
+                    break;
+                case RECIEVE_CALL_ID:
+                    mon.receiveCallID(action);
             }
         }
     }

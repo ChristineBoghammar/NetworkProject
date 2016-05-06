@@ -25,7 +25,7 @@ public class ClientMonitor {
     private final int COMMUNICATE_TO_CALL = 5;
     private final int RECIEVE_REQUESTED_CALL = 6;
     private final int REJECT_CALL = 7;
-
+    private final int RECIEVE_CLOSE_CALL = 8;
     /**
      * Possible cmd's are:
      * 0 - Connect to server
@@ -128,17 +128,31 @@ public class ClientMonitor {
 
 
     public synchronized void receiveRequest(Action action) {
+
+        /**
+         * Om användaren är upptagen
+         */
+//        if(callID != -1){
+//            Action response = new Action("b",getName(), REJECT_CALL, action.getCallID());
+//            try {
+//                oos.writeObject(response);
+//                System.out.println("connectClient Action written to server");
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+
         /**
          * Om användaren godkänner samtalet
          */
-//        callID = action.getCallID();
-//        Action response = new Action("y", getName(), ACCEPT_CALL, action.getCallID());
-//        try {
-//            oos.writeObject(response);
-//            System.out.println("receiveRequest Action written to server");
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+        callID = action.getCallID();
+        Action response = new Action("y", getName(), ACCEPT_CALL, action.getCallID());
+        try {
+            oos.writeObject(response);
+            System.out.println("receiveRequest Action written to server");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         /**
          * Om användaren ej godkänner samtalet
@@ -149,22 +163,27 @@ public class ClientMonitor {
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //        }
-        /**
-         * Om användaren är upptagen
-         *
-         */
-        Action response = new Action("b",getName(), REJECT_CALL, action.getCallID());
-        try {
-            oos.writeObject(response);
-            System.out.println("connectClient Action written to server");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
     }
 
-    public void closeCall() {
+    public synchronized void closeCall() {
+        Action closeAction = new Action("content", getName(), CLOSE_CALL, callID);
+        callID = -1;
+        try {
+            oos.writeObject(closeAction);
+            System.out.println("CloseCall action written to server");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
+    public void receiveCloseCall(Action action) {
+        System.out.println(action.getSender() + " Has left the call");
+    }
+
+    public void receiveCallID(Action action) {
+        callID = action.getCallID();
+        System.out.println("CallID is :" + action.getCallID());
     }
 }
 

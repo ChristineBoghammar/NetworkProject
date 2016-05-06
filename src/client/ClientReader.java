@@ -36,6 +36,7 @@ public class ClientReader extends Thread {
 
 
         } catch (IOException e) {
+            e.printStackTrace();
             System.err.print("IOException in ClientReader for client: " + mon.getName() + "\n");
 
         }

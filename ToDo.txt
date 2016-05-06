@@ -19,3 +19,5 @@
 	[] Show voicemails to the client
 
 
+**PROBLEM**
+ObjectOutputStream/ObjectInputStream can only be instantiated once. A possible solution is to put the ObjectOutputStreams within the Participants on the server side.
