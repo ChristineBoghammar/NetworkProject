@@ -105,6 +105,14 @@ public class ClientMonitor {
         System.out.println(action.getSender() + " Has accepted the call");
     }
 
+    public synchronized void rejectCall(Action action) {
+        if(action.getContent().equals("n")){
+            System.out.println(action.getSender() + " Has rejected the call");
+        } else {
+            System.out.println(action.getSender() + " is already in another call");
+        }
+    }
+
     public synchronized void sendToCall(Action action) {
         System.out.println("cmd: " + action.getCmd() + " content: " + action.getContent() + " sender: " + action.getSender() + " callId: " + action.getCallID());
     }
@@ -118,9 +126,6 @@ public class ClientMonitor {
         }
     }
 
-    public synchronized void rejectCall(Action action) {
-        System.out.println(action.getSender() + " Has accepted the call");
-    }
 
     public synchronized void receiveRequest(Action action) {
         /**
@@ -138,23 +143,27 @@ public class ClientMonitor {
         /**
          * Om användaren ej godkänner samtalet
          */
-        Action response = new Action("n",getName(), REJECT_CALL, action.getCallID());
-        try {
-            oos.writeObject(response);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        Action response = new Action("n",getName(), REJECT_CALL, action.getCallID());
+//        try {
+//            oos.writeObject(response);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
         /**
          * Om användaren är upptagen
          *
          */
-//        Action response = new Action("b",getName(), REJECT_CALL, action.getCallID());
-//        try {
-//            oos.writeObject(response);
-//            System.out.println("connectClient Action written to server");
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+        Action response = new Action("b",getName(), REJECT_CALL, action.getCallID());
+        try {
+            oos.writeObject(response);
+            System.out.println("connectClient Action written to server");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void closeCall() {
 
     }
 }

@@ -164,10 +164,10 @@ public class ServerMonitor {
 
         for (Participant p : actualCall.getInvitedParticipants()) {
             if (p.getName().equals(action.getSender())) {
-                getCall(action.getCallID()).getAcceptedCallList().add(p);
-                getCall(action.getCallID()).getInvitedParticipants().remove(p);
-                if (getCall(action.getCallID()).getAcceptedCallList().size() > 0) {
-                    for (Participant acceptP : getCall(action.getCallID()).getAcceptedCallList()) {
+                actualCall.getAcceptedCallList().add(p);
+                actualCall.getInvitedParticipants().remove(p);
+                if (actualCall.getAcceptedCallList().size() > 0) {
+                    for (Participant acceptP : actualCall.getAcceptedCallList()) {
                         if (!acceptP.getName().equals(action.getSender())) {
                             try {
                                 System.out.println(action.getSender() + " " + action.getCmd());
@@ -184,14 +184,14 @@ public class ServerMonitor {
     }
 
     @SuppressWarnings("Duplicates")
-    public void rejectCall(Action action) {
+    public synchronized void rejectCall(Action action) {
         Call actualCall = getCall(action.getCallID());
 
         for (Participant p : actualCall.getInvitedParticipants()) {
             if (p.getName().equals(action.getSender())) {
-                getCall(action.getCallID()).getInvitedParticipants().remove(p);
-                if (getCall(action.getCallID()).getAcceptedCallList().size() > 0) {
-                    for (Participant acceptP : getCall(action.getCallID()).getAcceptedCallList()) {
+                actualCall.getInvitedParticipants().remove(p);
+                if (actualCall.getAcceptedCallList().size() > 0) {
+                    for (Participant acceptP : actualCall.getAcceptedCallList()) {
                         if (!acceptP.getName().equals(action.getSender())) {
                             try {
                                 System.out.println(action.getSender() + " " + action.getCmd());

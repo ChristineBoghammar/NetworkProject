@@ -1,7 +1,7 @@
 [] Set up a call. Clients should be able to:
 	[x] Accept a call.
-	[] Reject a call.
-	[] Deny call because they're already in an active call.
+	[x] Reject a call.
+	[x] Deny call because they're already in an active call.
 	[] Close their connection to a call.
 	[] Send text messages to all call participants.
 [] When above is completed. A sound stream should be sent between the call participants.

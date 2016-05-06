@@ -11,6 +11,16 @@ public class ServerWriter extends Thread  {
     private ServerMonitor mon;
     private Socket socket;
 
+    private final int CONNECT = 0;
+    private final int DISCONNECT = 1;
+    private final int INITIATE_CALL = 2;
+    private final int ACCEPT_CALL = 3;
+    private final int CLOSE_CALL = 4;
+    private final int COMMUNICATE_TO_CALL = 5;
+    private final int RECIEVE_REQUESTED_CALL = 6;
+    private final int REJECT_CALL = 7;
+
+
     public ServerWriter(ServerMonitor mon, Socket socket){
         this.mon = mon;
         this.socket = socket;
@@ -20,27 +30,31 @@ public class ServerWriter extends Thread  {
         while (true) {
             Action action = mon.getMessage();
             switch (action.getCmd()) {
-                case 0:
+                case CONNECT:
                     mon.connectClient(action, socket);
                     break;
-                case 1:
+                case DISCONNECT:
                     mon.disconnectClient(action);
                     break;
-                case 2:
+                case INITIATE_CALL:
                     mon.requestCall(action);
                     break;
 
-                case 3:
+                case ACCEPT_CALL:
                     mon.acceptCall(action);
                     break;
-                case 4:
+                case CLOSE_CALL:
                     mon.closeCall(action);
                     break;
-                case 5:
+                case COMMUNICATE_TO_CALL:
                     mon.sendToCall(action);
                     break;
-                case 6:
+                case RECIEVE_REQUESTED_CALL:
+
+                    break;
+                case REJECT_CALL:
                     mon.rejectCall(action);
+                    break;
             }
         }
     }
