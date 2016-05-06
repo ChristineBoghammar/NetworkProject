@@ -24,6 +24,7 @@ public class ClientMonitor {
     private final int CLOSE_CALL = 4;
     private final int COMMUNICATE_TO_CALL = 5;
     private final int RECIEVE_REQUESTED_CALL = 6;
+    private final int REJECT_CALL = 7;
 
     /**
      * Possible cmd's are:
@@ -118,9 +119,7 @@ public class ClientMonitor {
     }
 
     public synchronized void rejectCall(Action action) {
-        /**
-         * En förfrågad person nekar ett samtal
-         */
+        System.out.println(action.getSender() + " Has accepted the call");
     }
 
     public synchronized void receiveRequest(Action action) {
@@ -139,18 +138,17 @@ public class ClientMonitor {
         /**
          * Om användaren ej godkänner samtalet
          */
-//        Action response = new Action("y",getName(), ACCEPT_CALL, action.getCallID());
-//        try {
-//            oos.writeObject(response);
-//            System.out.println("connectClient Action written to server");
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+        Action response = new Action("n",getName(), REJECT_CALL, action.getCallID());
+        try {
+            oos.writeObject(response);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         /**
          * Om användaren är upptagen
          *
          */
-//        Action response = new Action("b",getName(), ACCEPT_CALL, action.getCallID());
+//        Action response = new Action("b",getName(), REJECT_CALL, action.getCallID());
 //        try {
 //            oos.writeObject(response);
 //            System.out.println("connectClient Action written to server");

@@ -24,7 +24,8 @@ public class ServerMonitor {
     private final int CLOSE_CALL = 4;
     private final int COMMUNICATE_TO_CALL = 5;
     private final int RECIEVE_REQUESTED_CALL = 6;
-    private final int REJECT_REQUESTED_CALL = 7;
+    private final int REJECT_CALL = 7;
+
 
     /**
      * Possible cmd's are:
@@ -160,7 +161,6 @@ public class ServerMonitor {
     @SuppressWarnings("Duplicates")
     public synchronized void acceptCall(Action action) {
         Call actualCall = getCall(action.getCallID());
-        ArrayList<Participant> callList = actualCall.getAcceptedCallList();
 
         for (Participant p : actualCall.getInvitedParticipants()) {
             if (p.getName().equals(action.getSender())) {
@@ -186,7 +186,6 @@ public class ServerMonitor {
     @SuppressWarnings("Duplicates")
     public void rejectCall(Action action) {
         Call actualCall = getCall(action.getCallID());
-        ArrayList<Participant> callList = actualCall.getAcceptedCallList();
 
         for (Participant p : actualCall.getInvitedParticipants()) {
             if (p.getName().equals(action.getSender())) {
