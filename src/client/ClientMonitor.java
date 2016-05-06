@@ -101,12 +101,7 @@ public class ClientMonitor {
     }
 
     public synchronized void acceptCall(Action action) {
-        /**
-         * En person som förfrågades ett samtal har accepterat. Notifiera klienten via GUI
-         */
-
-        System.out.println("cmd: " + action.getCmd() + " content: " + action.getContent() + " sender: " + action.getSender() + " callId: " + action.getCallID());
-
+        System.out.println(action.getSender() + " Has accepted the call");
     }
 
     public synchronized void sendToCall(Action action) {
@@ -128,18 +123,18 @@ public class ClientMonitor {
          */
     }
 
-    public synchronized void recieveRequest(Action action) {
+    public synchronized void receiveRequest(Action action) {
         /**
          * Om användaren godkänner samtalet
          */
-        callID = action.getCallID();
-        Action response = new Action("y", getName(), ACCEPT_CALL, action.getCallID());
-        try {
-            oos.writeObject(response);
-            System.out.println("connectClient Action written to server");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        callID = action.getCallID();
+//        Action response = new Action("y", getName(), ACCEPT_CALL, action.getCallID());
+//        try {
+//            oos.writeObject(response);
+//            System.out.println("receiveRequest Action written to server");
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
         /**
          * Om användaren ej godkänner samtalet
