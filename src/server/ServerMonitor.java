@@ -100,7 +100,11 @@ public class ServerMonitor {
     }
 
     public synchronized void connectClient(Action action, Socket socket) {
-        participants.add(new Participant(action.getSender(), socket));
+        try {
+            participants.add(new Participant(action.getSender(), socket));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         System.out.println("Client connected: " + action.getSender());
         System.out.println(participants.size());
     }
@@ -146,11 +150,9 @@ public class ServerMonitor {
         c.getAcceptedCallList().add(getParticipant(action.getSender()));
         Action reqAction = new Action(action.getContent(), action.getSender(), RECIEVE_REQUESTED_CALL, c.getID());
         System.out.println(reqAction.getContent() + " " + reqAction.getSender() + " " + reqAction.getCmd() + " " + reqAction.getCallID());
-        ObjectOutputStream oos;
         for (Participant p : getCallParticipants(action.getCallList())) {
             try {
-                oos = new ObjectOutputStream(p.getSocket().getOutputStream());
-                oos.writeObject(reqAction);
+                p.getObjectOutputStream().writeObject(reqAction);
                 System.out.println("Wrote object to them");
 
             } catch (IOException e) {
@@ -159,8 +161,7 @@ public class ServerMonitor {
         }
         try {
             Action callIdAction = new Action(action.getContent(), action.getSender(), RECIEVE_CALL_ID, c.getID());
-            oos = new ObjectOutputStream(getParticipant(action.getSender()).getSocket().getOutputStream());
-
+            getParticipant(action.getSender()).getObjectOutputStream().writeObject(callIdAction);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -181,8 +182,7 @@ public class ServerMonitor {
                         if (!acceptP.getName().equals(action.getSender())) {
                             try {
                                 System.out.println(action.getSender() + " " + action.getCmd());
-                                ObjectOutputStream oos = new ObjectOutputStream(acceptP.getSocket().getOutputStream());
-                                oos.writeObject(action);
+                                acceptP.getObjectOutputStream().writeObject(action);
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -206,8 +206,7 @@ public class ServerMonitor {
                         if (!acceptP.getName().equals(action.getSender())) {
                             try {
                                 System.out.println(action.getSender() + " " + action.getCmd());
-                                ObjectOutputStream oos = new ObjectOutputStream(acceptP.getSocket().getOutputStream());
-                                oos.writeObject(action);
+                                acceptP.getObjectOutputStream().writeObject(action);
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -243,8 +242,7 @@ public class ServerMonitor {
                 System.out.println("Got here");
                 try {
                     System.out.println(action.getSender() + " " + action.getCmd());
-                    ObjectOutputStream oos = new ObjectOutputStream(acceptP.getSocket().getOutputStream());
-                    oos.writeObject(closeAction);
+                    acceptP.getObjectOutputStream().writeObject(closeAction);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
