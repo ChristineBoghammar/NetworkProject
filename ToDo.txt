@@ -2,8 +2,8 @@
 	[x] Accept a call.
 	[x] Reject a call.
 	[x] Deny call because they're already in an active call.
-	[] Close their connection to a call.
-	[] Send text messages to all call participants.
+	[x] Close their connection to a call.
+	[x] Send text messages to all call participants.
 [] When above is completed. A sound stream should be sent between the call participants.
 	[] Implement Java Sound to send prerecorded audio to call participants
 	[] Find a good buffer length so that audio packets arent sent too often and also do not cause a big delay. (50 ms of data is a possible start point)

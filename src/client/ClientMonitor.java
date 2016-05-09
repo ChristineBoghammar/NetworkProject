@@ -114,7 +114,11 @@ public class ClientMonitor {
     }
 
     public synchronized void sendToCall(Action action) {
-        System.out.println("cmd: " + action.getCmd() + " content: " + action.getContent() + " sender: " + action.getSender() + " callId: " + action.getCallID());
+        try {
+            oos.writeObject(action);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public synchronized void connectClient(Action action) {
@@ -184,6 +188,10 @@ public class ClientMonitor {
     public void receiveCallID(Action action) {
         callID = action.getCallID();
         System.out.println("CallID is :" + action.getCallID());
+    }
+
+    public void receiveFromCall(Action action) {
+        System.out.println(action.getContent());
     }
 }
 

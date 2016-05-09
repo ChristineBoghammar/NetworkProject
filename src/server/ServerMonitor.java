@@ -27,6 +27,7 @@ public class ServerMonitor {
     private final int REJECT_CALL = 7;
     private final int RECIEVE_CLOSE_CALL = 8;
     private final int RECIEVE_CALL_ID = 9;
+    private final int RECIEVE_FROM_CALL = 10;
 
 
     /**
@@ -126,9 +127,12 @@ public class ServerMonitor {
     }
 
     public synchronized void sendToCall(Action action) {
+        Action sendAction = new Action(action.getContent(), action.getSender(), RECIEVE_FROM_CALL, action.getCallID());
         for (Participant p : getCall(action.getCallID()).getAcceptedCallList()) {
+            if(!p.getName().equals(action.getSender()))
             try {
-                p.getSocket().getOutputStream().write(action.getContent().getBytes());
+                p.getObjectOutputStream().writeObject(sendAction);
+//                p.getSocket().getOutputStream().write(action.getContent().getBytes());
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -153,8 +157,6 @@ public class ServerMonitor {
         for (Participant p : getCallParticipants(action.getCallList())) {
             try {
                 p.getObjectOutputStream().writeObject(reqAction);
-                System.out.println("Wrote object to them");
-
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -239,7 +241,6 @@ public class ServerMonitor {
         if(removedParticipant){
             Action closeAction = new Action(action.getContent(), action.getSender(), RECIEVE_CLOSE_CALL, action.getCallID());
             for(Participant acceptP : call.getAcceptedCallList()){
-                System.out.println("Got here");
                 try {
                     System.out.println(action.getSender() + " " + action.getCmd());
                     acceptP.getObjectOutputStream().writeObject(closeAction);
