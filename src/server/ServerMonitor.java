@@ -134,6 +134,7 @@ public class ServerMonitor {
             if(!p.getName().equals(action.getSender()))
             try {
                 p.getObjectOutputStream().writeObject(sendAction);
+                p.getObjectOutputStream().flush();
 //                p.getSocket().getOutputStream().write(action.getContent().getBytes());
             } catch (IOException e) {
                 // TODO Auto-generated catch block
@@ -159,6 +160,7 @@ public class ServerMonitor {
         for (Participant p : getCallParticipants(action.getCallList())) {
             try {
                 p.getObjectOutputStream().writeObject(reqAction);
+                p.getObjectOutputStream().flush();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -166,6 +168,7 @@ public class ServerMonitor {
         try {
             Action callIdAction = new Action(action.getContent(), action.getSender(), RECIEVE_CALL_ID, c.getID());
             getParticipant(action.getSender()).getObjectOutputStream().writeObject(callIdAction);
+            getParticipant(action.getSender()).getObjectOutputStream().flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -187,6 +190,7 @@ public class ServerMonitor {
                             try {
                                 System.out.println(action.getSender() + " " + action.getCmd());
                                 acceptP.getObjectOutputStream().writeObject(action);
+                                acceptP.getObjectOutputStream().flush();
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -211,6 +215,7 @@ public class ServerMonitor {
                             try {
                                 System.out.println(action.getSender() + " " + action.getCmd());
                                 acceptP.getObjectOutputStream().writeObject(action);
+                                acceptP.getObjectOutputStream().flush();
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -246,6 +251,7 @@ public class ServerMonitor {
                 try {
                     System.out.println(action.getSender() + " " + action.getCmd());
                     acceptP.getObjectOutputStream().writeObject(closeAction);
+                    acceptP.getObjectOutputStream().flush();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -270,6 +276,7 @@ public class ServerMonitor {
             if(!p.getName().equals(action.getSender()))
                 try {
                     p.getObjectOutputStream().writeObject(sendAction);
+                    p.getObjectOutputStream().flush();
 //                p.getSocket().getOutputStream().write(action.getContent().getBytes());
                 } catch (IOException e) {
                     // TODO Auto-generated catch block

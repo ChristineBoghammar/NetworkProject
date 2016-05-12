@@ -126,6 +126,7 @@ public class ClientMonitor {
         try {
             oos.writeObject(action);
             System.out.println("RequestCall Action written to server");
+            oos.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -151,6 +152,7 @@ public class ClientMonitor {
     public synchronized void sendToCall(Action action) {
         try {
             oos.writeObject(action);
+            oos.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -163,6 +165,7 @@ public class ClientMonitor {
     public synchronized void connectClient(Action action) {
         try {
             oos.writeObject(action);
+            oos.flush();
             System.out.println("connectClient Action written to server");
         } catch (IOException e) {
             e.printStackTrace();
@@ -205,6 +208,7 @@ public class ClientMonitor {
         Action response = new Action("y", getName(), ACCEPT_CALL, action.getCallID());
         try {
             oos.writeObject(response);
+            oos.flush();
             System.out.println("receiveRequest Action written to server");
         } catch (IOException e) {
             e.printStackTrace();
@@ -242,6 +246,7 @@ public class ClientMonitor {
         callID = -1;
         try {
             oos.writeObject(closeAction);
+            oos.flush();
             System.out.println("CloseCall action written to server");
         } catch (IOException e) {
             e.printStackTrace();
@@ -274,6 +279,7 @@ public class ClientMonitor {
     public synchronized void sendAudioData(Action action) {
         try {
             oos.writeObject(action);
+            oos.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
