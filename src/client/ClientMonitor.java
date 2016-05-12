@@ -136,7 +136,8 @@ public class ClientMonitor {
 
     public synchronized void acceptCall(Action action) {
         if(aw != null){
-            new AudioWriter(this, os).start();
+            aw = new AudioWriter(this, os);
+            aw.start();
         }
 
         System.out.println(action.getSender() + " Has accepted the call");
@@ -218,8 +219,8 @@ public class ClientMonitor {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        new AudioWriter(this, os).start();
-
+        aw = new AudioWriter(this, os);
+        aw.start();
         /**
          * Om användaren ej godkänner samtalet
          */

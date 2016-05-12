@@ -55,7 +55,7 @@ public class AudioWriter extends Thread {
             if (count > 0) {
                 System.out.println("Writing buffer to server.");
                 mon.putAction(new Action(tmpBuff, mon.getName(), SEND_AUDIO_DATA, mon.getCallID()));
-//                tmpBuff = new byte[mic.getBufferSize()];
+                tmpBuff = new byte[mic.getBufferSize()];
                 try {
                     this.sleep(100);
                 } catch (InterruptedException e) {
