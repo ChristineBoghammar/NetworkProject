@@ -15,6 +15,7 @@ public class Action implements Serializable {
     private int callID;
     private String sender;
     private ArrayList<String> peopleToCall;
+    private byte[] audioData;
 
     /**
      * Possible cmd's are:
@@ -24,41 +25,52 @@ public class Action implements Serializable {
      * 3 - Accept call
      * 4 - Close call
      * 5 - Communication via call
+     * 6 - Receive requested Call
+     * 7 - Deny Call
      */
-    public Action(String content, String sender, int cmd, int callID){
-        this.content=content;
-        this.sender=sender;
-        this.cmd=cmd;
+    public Action(String content, String sender, int cmd, int callID) {
+        this.content = content;
+        this.sender = sender;
+        this.cmd = cmd;
         this.callID = callID;
     }
 
-    public Action(String content, String sender, int cmd, ArrayList<String> peopleToCall){
+    public Action(String content, String sender, int cmd, ArrayList<String> peopleToCall) {
         this.content = content;
         this.sender = sender;
         this.cmd = cmd;
         this.peopleToCall = peopleToCall;
     }
 
+    public Action(byte[] audioData, String sender, int cmd, int callID) {
+        this.audioData = audioData;
+        this.sender = sender;
+        this.cmd = cmd;
+        this.callID = callID;
+    }
 
 
-
-    public String getContent(){
+    public String getContent() {
         return content;
     }
 
-    public int getCmd(){
+    public int getCmd() {
         return cmd;
     }
 
-    public String getSender(){
+    public String getSender() {
         return sender;
     }
 
-    public int getCallID(){
+    public int getCallID() {
         return callID;
     }
 
-    public ArrayList<String> getCallList(){
+    public ArrayList<String> getCallList() {
         return peopleToCall;
+    }
+
+    public byte[] getAudioData() {
+        return audioData;
     }
 }

@@ -1,0 +1,20 @@
+[] Set up a call. Clients should be able to:
+	[x] Accept a call.
+	[x] Reject a call.
+	[x] Deny call because they're already in an active call.
+	[x] Close their connection to a call.
+	[x] Send text messages to all call participants.
+[] When above is completed. A sound stream should be sent between the call participants.
+	[] Implement Java Sound to send prerecorded audio to call participants
+	[] Find a good buffer length so that audio packets arent sent too often and also do not cause a big delay. (50 ms of data is a possible start point)
+	
+[] Implement the possibility of sending a voicemail to other people. Should be possible to record the audio file and then send it to the other client directly through the monitor
+
+[] Implement a GUI so that the following is possible:
+	[] Show a list of active clients
+	[] Have the ability to call several participants
+		[] Have the ability to accept a call.		
+		[] Have the ability to reject a call.		
+		[] Have the ability to end a call.	
+	[] Show voicemails to the client
+

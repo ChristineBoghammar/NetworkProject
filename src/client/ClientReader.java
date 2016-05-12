@@ -1,34 +1,44 @@
 package client;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import protocol.Action;
+
+import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 
 public class ClientReader extends Thread {
     private Socket s;
-    private client.ClientMonitor mon;
+    private ClientMonitor mon;
+    private boolean connected;
 
     public ClientReader(ClientMonitor mon, Socket s) {
         this.s = s;
         this.mon = mon;
+        this.connected = false;
     }
 
     public void run() {
         try {
-            InputStreamReader in = new InputStreamReader(s.getInputStream());
-            BufferedReader br = new BufferedReader(in);
-            String line;
-            while((line = br.readLine()) != null){
-                System.out.println(line);
+            ObjectInputStream in = new ObjectInputStream(s.getInputStream());
+            Action action = null;
+            /**
+             * Det som står nedan skall gälla egentligen. Testar bara med egna inputs
+             */
+            try {
+                while ((action = ((Action) in.readObject())) != null) {
+                    mon.putAction(action);
+                }
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
             }
+
+
         } catch (IOException e) {
-            System.err.println("Socket Closed");
-        } finally{
-            return;
+            e.printStackTrace();
+            System.err.print("IOException in ClientReader for client: " + mon.getName() + "\n");
+
         }
     }
 

@@ -17,10 +17,36 @@ public class ServerMonitor {
     private ArrayList<Call> activeCalls;
     private int uniqueID = 0;
 
+    private final int CONNECT = 0;
+    private final int DISCONNECT = 1;
+    private final int INITIATE_CALL = 2;
+    private final int ACCEPT_CALL = 3;
+    private final int CLOSE_CALL = 4;
+    private final int COMMUNICATE_TO_CALL = 5;
+    private final int RECIEVE_REQUESTED_CALL = 6;
+    private final int REJECT_CALL = 7;
+    private final int RECIEVE_CLOSE_CALL = 8;
+    private final int RECIEVE_CALL_ID = 9;
+    private final int RECIEVE_FROM_CALL = 10;
+    private final int SEND_AUDIO_DATA = 11;
+    private final int RECIEVE_AUDIO_DATA = 12;
+
+
+    /**
+     * Possible cmd's are:
+     * 0 - Connect to server
+     * 1 - Disconnect from server
+     * 2 - Initiate call
+     * 3 - Accept call
+     * 4 - Close call
+     * 5 - Communication via call
+     * 6 - Receive requested Call
+     */
+
     public ServerMonitor() {
         this.actions = new LinkedList<Action>();
         this.participants = new ArrayList<Participant>();
-
+        this.activeCalls = new ArrayList<Call>();
     }
 
 
@@ -38,6 +64,7 @@ public class ServerMonitor {
 
     public synchronized void putMessage(Action action) {
         actions.add(action);
+        notifyAll();
     }
 
     public synchronized void addParticipant(Participant p) {
@@ -57,6 +84,15 @@ public class ServerMonitor {
         return null;
     }
 
+    public synchronized Participant getParticipant(Socket s) {
+        for (Participant p : participants) {
+            if (p.getSocket().equals(s)) {
+                return p;
+            }
+        }
+        return null;
+    }
+
     public synchronized Call getCall(int id) {
         for (Call c : activeCalls) {
             if (c.getID() == id) {
@@ -67,10 +103,16 @@ public class ServerMonitor {
     }
 
     public synchronized void connectClient(Action action, Socket socket) {
-        participants.add(new Participant(action.getSender(), socket));
+        try {
+            participants.add(new Participant(action.getSender(), socket));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println("Client connected: " + action.getSender());
+        System.out.println(participants.size());
     }
 
-    public void disconnectClient(Action action) {
+    public synchronized void disconnectClient(Action action) {
         participants.remove(getParticipant(action.getSender()));
     }
 
@@ -87,9 +129,12 @@ public class ServerMonitor {
     }
 
     public synchronized void sendToCall(Action action) {
+        Action sendAction = new Action(action.getContent(), action.getSender(), RECIEVE_FROM_CALL, action.getCallID());
         for (Participant p : getCall(action.getCallID()).getAcceptedCallList()) {
+            if(!p.getName().equals(action.getSender()))
             try {
-                p.getSocket().getOutputStream().write(action.getContent().getBytes());
+                p.getObjectOutputStream().writeObject(sendAction);
+//                p.getSocket().getOutputStream().write(action.getContent().getBytes());
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -99,56 +144,115 @@ public class ServerMonitor {
 
 
     public synchronized void requestCall(Action action) {
+        System.out.println("Got to requestCall");
         ArrayList<Participant> activeCallList = new ArrayList<Participant>();
         activeCallList.add(getParticipant(action.getSender()));
-        Call c = new Call(activeCallList, uniqueID++);
+        ArrayList<Participant> invited = new ArrayList<Participant>();
+        for (String p : action.getCallList()) {
+            invited.add(getParticipant(p));
+        }
+        Call c = new Call(invited, uniqueID++);
         activeCalls.add(c);
-        Action reqAction = new Action(action.getContent(), action.getSender(), action.getCmd(), c.getID());
+        c.getAcceptedCallList().add(getParticipant(action.getSender()));
+        Action reqAction = new Action(action.getContent(), action.getSender(), RECIEVE_REQUESTED_CALL, c.getID());
+        System.out.println(reqAction.getContent() + " " + reqAction.getSender() + " " + reqAction.getCmd() + " " + reqAction.getCallID());
         for (Participant p : getCallParticipants(action.getCallList())) {
             try {
-                ObjectOutputStream oos = new ObjectOutputStream(p.getSocket().getOutputStream());
-                oos.writeObject(reqAction);
+                p.getObjectOutputStream().writeObject(reqAction);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+        try {
+            Action callIdAction = new Action(action.getContent(), action.getSender(), RECIEVE_CALL_ID, c.getID());
+            getParticipant(action.getSender()).getObjectOutputStream().writeObject(callIdAction);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 
+    @SuppressWarnings("Duplicates")
     public synchronized void acceptCall(Action action) {
         Call actualCall = getCall(action.getCallID());
-        ArrayList<Participant> callList = actualCall.getAcceptedCallList();
 
+        ArrayList toRemove = new ArrayList();
         for (Participant p : actualCall.getInvitedParticipants()) {
             if (p.getName().equals(action.getSender())) {
-                if (getCall(action.getCallID()).getAcceptedCallList().size() > 0) {
-                    for (Participant acceptP : getCall(action.getCallID()).getAcceptedCallList()) {
-                        try {
-                            ObjectOutputStream oos = new ObjectOutputStream(p.getSocket().getOutputStream());
-                            oos.writeObject(action);
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                actualCall.getAcceptedCallList().add(p);
+                toRemove.remove(p);
+                if (actualCall.getAcceptedCallList().size() > 0) {
+                    for (Participant acceptP : actualCall.getAcceptedCallList()) {
+                        if (!acceptP.getName().equals(action.getSender())) {
+                            try {
+                                System.out.println(action.getSender() + " " + action.getCmd());
+                                acceptP.getObjectOutputStream().writeObject(action);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
                 }
-                getCall(action.getCallID()).getAcceptedCallList().add(p);
             }
         }
+        actualCall.getInvitedParticipants().removeAll(toRemove);
     }
 
+    @SuppressWarnings("Duplicates")
+    public synchronized void rejectCall(Action action) {
+        Call actualCall = getCall(action.getCallID());
+        ArrayList toRemove = new ArrayList();
+        for (Participant p : actualCall.getInvitedParticipants()) {
+            if (p.getName().equals(action.getSender())) {
+                toRemove.add(p);
+                if (actualCall.getAcceptedCallList().size() > 0) {
+                    for (Participant acceptP : actualCall.getAcceptedCallList()) {
+                        if (!acceptP.getName().equals(action.getSender())) {
+                            try {
+                                System.out.println(action.getSender() + " " + action.getCmd());
+                                acceptP.getObjectOutputStream().writeObject(action);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        actualCall.getInvitedParticipants().removeAll(toRemove);
+    }
+
+    @SuppressWarnings("Duplicates")
     public synchronized void closeCall(Action action) {
         Call call = getCall(action.getCallID());
+        boolean removedParticipant = false;
+        if(call.getInvitedParticipants().size() > 0){
+            if (!call.getInvitedParticipants().contains(getParticipant(action.getSender()))) {
+                ArrayList toRemove = new ArrayList();
+                for (Participant p : call.getAcceptedCallList()) {
+                    if (p.getName().equals(action.getSender())) {
+                        toRemove.add(p);
+                        removedParticipant = true;
+                    }
 
-        for (Participant p : call.getAcceptedCallList()) {
-            if (p.getName().equals(action.getSender())) {
-                call.getAcceptedCallList().remove(p);
-                    /*
-                    Här måste vi hantera de "participants" som ännu inte har accepterat eller nekat detta samtal
-                     */
+                }
+                call.getAcceptedCallList().removeAll(toRemove);
+
             }
         }
-    }
+        if(removedParticipant){
+            Action closeAction = new Action(action.getContent(), action.getSender(), RECIEVE_CLOSE_CALL, action.getCallID());
+            for(Participant acceptP : call.getAcceptedCallList()){
+                try {
+                    System.out.println(action.getSender() + " " + action.getCmd());
+                    acceptP.getObjectOutputStream().writeObject(closeAction);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
 
+    }
 
     public synchronized void closeConnection(Action action) {
         for (Participant p : participants) {
@@ -158,24 +262,19 @@ public class ServerMonitor {
         }
     }
 
-    public void rejectCall(Action action) {
-        Call actualCall = getCall(action.getCallID());
-        ArrayList<Participant> callList = actualCall.getAcceptedCallList();
 
-        for (Participant p : callList) {
-            if (p.getName().equals(action.getSender())) {
-                if (callList.size() > 0) {
-                    for (Participant acceptP : callList) {
-                        try {
-                            ObjectOutputStream oos = new ObjectOutputStream(p.getSocket().getOutputStream());
-                            oos.writeObject(action);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
+    @SuppressWarnings("Duplicates")
+    public void sendAudio(Action action) {
+        Action sendAction = new Action(action.getAudioData(), action.getSender(), RECIEVE_AUDIO_DATA, action.getCallID());
+        for (Participant p : getCall(action.getCallID()).getAcceptedCallList()) {
+            if(!p.getName().equals(action.getSender()))
+                try {
+                    p.getObjectOutputStream().writeObject(sendAction);
+//                p.getSocket().getOutputStream().write(action.getContent().getBytes());
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
                 }
-                callList.add(p);
-            }
         }
     }
 }
