@@ -109,10 +109,20 @@ public class ClientMonitor {
         notifyAll();
     }
 
+    @SuppressWarnings("Duplicates")
     public synchronized void requestCall(Action action) {
         /**
          * Någon försöker starta ett samtal med denna client. Lösning är att godkänna eller neka. Görs via GUI.
          */
+        DataLine.Info speakerInfo = new DataLine.Info(SourceDataLine.class,format);
+        try {
+            speaker = (SourceDataLine) AudioSystem.getLine(speakerInfo);
+            System.out.println(speaker.toString());
+            speaker.open(format);
+        } catch (LineUnavailableException e) {
+            e.printStackTrace();
+        }
+        speaker.start();
         try {
             oos.writeObject(action);
             System.out.println("RequestCall Action written to server");
@@ -181,6 +191,16 @@ public class ClientMonitor {
         /**
          * Om användaren godkänner samtalet
          */
+        DataLine.Info speakerInfo = new DataLine.Info(SourceDataLine.class,format);
+        try {
+            speaker = (SourceDataLine) AudioSystem.getLine(speakerInfo);
+            System.out.println(speaker.toString());
+            speaker.open(format);
+        } catch (LineUnavailableException e) {
+            e.printStackTrace();
+        }
+        speaker.start();
+
         callID = action.getCallID();
         Action response = new Action("y", getName(), ACCEPT_CALL, action.getCallID());
         try {
@@ -264,15 +284,7 @@ public class ClientMonitor {
      * @param action
      */
     public synchronized void receiveAudioData(Action action) {
-        DataLine.Info speakerInfo = new DataLine.Info(SourceDataLine.class,format);
-        try {
-            speaker = (SourceDataLine) AudioSystem.getLine(speakerInfo);
-            System.out.println(speaker.toString());
-            speaker.open(format);
-        } catch (LineUnavailableException e) {
-            e.printStackTrace();
-        }
-        speaker.start();
+
         byte[] data = action.getAudioData();
         ByteArrayInputStream bais = new ByteArrayInputStream(data);
         AudioInputStream ais = new AudioInputStream(bais,format,data.length);
