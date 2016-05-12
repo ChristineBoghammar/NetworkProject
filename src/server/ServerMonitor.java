@@ -28,6 +28,8 @@ public class ServerMonitor {
     private final int RECIEVE_CLOSE_CALL = 8;
     private final int RECIEVE_CALL_ID = 9;
     private final int RECIEVE_FROM_CALL = 10;
+    private final int SEND_AUDIO_DATA = 11;
+    private final int RECIEVE_AUDIO_DATA = 12;
 
 
     /**
@@ -261,4 +263,18 @@ public class ServerMonitor {
     }
 
 
+    @SuppressWarnings("Duplicates")
+    public void sendAudio(Action action) {
+        Action sendAction = new Action(action.getAudioData(), action.getSender(), RECIEVE_AUDIO_DATA, action.getCallID());
+        for (Participant p : getCall(action.getCallID()).getAcceptedCallList()) {
+            if(!p.getName().equals(action.getSender()))
+                try {
+                    p.getObjectOutputStream().writeObject(sendAction);
+//                p.getSocket().getOutputStream().write(action.getContent().getBytes());
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+        }
+    }
 }

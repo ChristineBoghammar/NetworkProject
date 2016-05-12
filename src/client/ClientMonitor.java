@@ -3,8 +3,11 @@ package client;
 import protocol.Action;
 import server.Call;
 
+import javax.sound.sampled.*;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.net.Socket;
 import java.util.LinkedList;
 
@@ -17,6 +20,12 @@ public class ClientMonitor {
     private Socket socket;
     private int callID;
     private ObjectOutputStream oos;
+    private AudioInputStream ais;
+    private OutputStream os;
+    private AudioFormat format;
+    private SourceDataLine speaker;
+
+
     private final int CONNECT = 0;
     private final int DISCONNECT = 1;
     private final int INITIATE_CALL = 2;
@@ -26,6 +35,11 @@ public class ClientMonitor {
     private final int RECIEVE_REQUESTED_CALL = 6;
     private final int REJECT_CALL = 7;
     private final int RECIEVE_CLOSE_CALL = 8;
+    private final int RECIEVE_CALL_ID = 9;
+    private final int RECIEVE_FROM_CALL = 10;
+    private final int SEND_AUDIO_DATA = 11;
+    private final int RECIEVE_AUDIO_DATA = 12;
+
     /**
      * Possible cmd's are:
      * 0 - Connect to server
@@ -44,9 +58,12 @@ public class ClientMonitor {
         callID = -1;
         try {
             oos = new ObjectOutputStream(s.getOutputStream());
+            os = s.getOutputStream();
         } catch (IOException e) {
             e.printStackTrace();
         }
+        this.format = getAudioFormat();
+        this.speaker = null;
     }
 
 
@@ -157,6 +174,7 @@ public class ClientMonitor {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        new AudioWriter(this, os).start();
 
         /**
          * Om användaren ej godkänner samtalet
@@ -170,6 +188,18 @@ public class ClientMonitor {
 
     }
 
+    @SuppressWarnings("Duplicates")
+    private AudioFormat getAudioFormat(){
+        float sampleRate = 16000.0F;
+        int sampleSizeBits = 16;
+        int channels = 1;
+        boolean signed = true;
+        boolean bigEndian = false;
+
+        return new AudioFormat(sampleRate, sampleSizeBits, channels, signed, bigEndian);
+    }
+
+
     public synchronized void closeCall() {
         Action closeAction = new Action("content", getName(), CLOSE_CALL, callID);
         callID = -1;
@@ -179,19 +209,61 @@ public class ClientMonitor {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        speaker.drain();
+        speaker.close();
     }
 
-    public void receiveCloseCall(Action action) {
+    public synchronized void receiveCloseCall(Action action) {
         System.out.println(action.getSender() + " Has left the call");
     }
 
-    public void receiveCallID(Action action) {
+    public synchronized void receiveCallID(Action action) {
         callID = action.getCallID();
         System.out.println("CallID is :" + action.getCallID());
     }
 
-    public void receiveFromCall(Action action) {
+    public synchronized void receiveFromCall(Action action) {
         System.out.println(action.getSender() + ": " + action.getContent());
+    }
+
+    public synchronized void sendAudioData(Action action) {
+        try {
+            oos.writeObject(action);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public synchronized void receiveAudioData(Action action) {
+        DataLine.Info speakerInfo = new DataLine.Info(SourceDataLine.class,format);
+        try {
+            speaker = (SourceDataLine) AudioSystem.getLine(speakerInfo);
+            System.out.println(speaker.toString());
+            speaker.open(format);
+        } catch (LineUnavailableException e) {
+            e.printStackTrace();
+        }
+        speaker.start();
+        byte[] data = action.getAudioData();
+        ByteArrayInputStream bais = new ByteArrayInputStream(data);
+        AudioInputStream ais = new AudioInputStream(bais,format,data.length);
+        int bytesRead = 0;
+        try {
+            if((bytesRead = ais.read(data)) != -1){
+                System.out.println("Writing to audio output.");
+                speaker.write(data,0,bytesRead);
+
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            ais.close();
+            bais.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
 

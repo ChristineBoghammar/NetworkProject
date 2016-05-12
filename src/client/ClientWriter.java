@@ -28,7 +28,8 @@ public class ClientWriter extends Thread {
     private final int RECIEVE_CLOSE_CALL = 8;
     private final int RECIEVE_CALL_ID = 9;
     private final int RECIEVE_FROM_CALL = 10;
-
+    private final int SEND_AUDIO_DATA = 11;
+    private final int RECIEVE_AUDIO_DATA = 12;
 
 
     public void run(){
@@ -71,6 +72,11 @@ public class ClientWriter extends Thread {
                 case RECIEVE_FROM_CALL:
                     mon.receiveFromCall(action);
                     break;
+                case SEND_AUDIO_DATA:
+                    mon.sendAudioData(action);
+                    break;
+                case RECIEVE_AUDIO_DATA:
+                    mon.receiveAudioData(action);
             }
         }
     }

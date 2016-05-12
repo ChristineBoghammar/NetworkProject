@@ -22,6 +22,8 @@ public class ServerWriter extends Thread  {
     private final int RECIEVE_CLOSE_CALL = 8;
     private final int RECIEVE_CALL_ID = 9;
     private final int RECIEVE_FROM_CALL = 10;
+    private final int SEND_AUDIO_DATA = 11;
+    private final int RECIEVE_AUDIO_DATA = 12;
 
 
     public ServerWriter(ServerMonitor mon, Socket socket){
@@ -58,6 +60,10 @@ public class ServerWriter extends Thread  {
                 case REJECT_CALL:
                     mon.rejectCall(action);
                     break;
+                case SEND_AUDIO_DATA:
+                    mon.sendAudio(action);
+                    break;
+
             }
         }
     }
