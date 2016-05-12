@@ -47,7 +47,7 @@ public class AudioWriter extends Thread {
             e.printStackTrace();
         }
         System.out.println("Mic open.");
-        byte tmpBuff[] = new byte[mic.getBufferSize()];
+        byte tmpBuff[] = new byte[mic.getBufferSize() / 5];
         mic.start();
         while (mon.getCallID() != -1) {
             System.out.println("Reading from mic.");
@@ -55,6 +55,12 @@ public class AudioWriter extends Thread {
             if (count > 0) {
                 System.out.println("Writing buffer to server.");
                 mon.putAction(new Action(tmpBuff, mon.getName(), SEND_AUDIO_DATA, mon.getCallID()));
+                tmpBuff = new byte[mic.getBufferSize() / 5];
+                try {
+                    this.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
 //              out.write(tmpBuff, 0, count);
             }
 
