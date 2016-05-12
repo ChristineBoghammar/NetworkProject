@@ -9,7 +9,7 @@ import java.util.Scanner;
 
 
 public class ClientMain {
-    public static String host = "localhost";
+    public static String host = "192.168.1.113";
     public static int port = 30000;
 
     public static void main(String args[]) {

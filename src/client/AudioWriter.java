@@ -37,7 +37,7 @@ public class AudioWriter extends Thread {
     }
 
     public void run() {
-        DataOutputStream out = new DataOutputStream(os);
+//        DataOutputStream out = new DataOutputStream(os);
         DataLine.Info micInfo = new DataLine.Info(TargetDataLine.class, format);
         TargetDataLine mic = null;
         try {
