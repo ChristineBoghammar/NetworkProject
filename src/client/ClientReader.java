@@ -22,6 +22,7 @@ public class ClientReader extends Thread {
     public void run() {
         try {
             ObjectInputStream in = new ObjectInputStream(s.getInputStream());
+            System.out.println("ObjectStream Created");
             Action action = null;
             /**
              * Det som står nedan skall gälla egentligen. Testar bara med egna inputs

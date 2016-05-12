@@ -270,7 +270,7 @@ public class ServerMonitor {
 
 
     @SuppressWarnings("Duplicates")
-    public void sendAudio(Action action) {
+    public synchronized void sendAudio(Action action) {
         Action sendAction = new Action(action.getAudioData(), action.getSender(), RECIEVE_AUDIO_DATA, action.getCallID());
         for (Participant p : getCall(action.getCallID()).getAcceptedCallList()) {
             if(!p.getName().equals(action.getSender()))

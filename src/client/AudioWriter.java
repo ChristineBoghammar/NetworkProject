@@ -14,7 +14,6 @@ import java.io.OutputStream;
 
 public class AudioWriter extends Thread {
     private ClientMonitor mon;
-    private OutputStream os;
     private AudioFormat format;
     private final int CONNECT = 0;
     private final int DISCONNECT = 1;
@@ -30,14 +29,15 @@ public class AudioWriter extends Thread {
     private final int SEND_AUDIO_DATA = 11;
     private final int RECIEVE_AUDIO_DATA = 12;
 
-    public AudioWriter(ClientMonitor mon, OutputStream os) {
+    public AudioWriter(ClientMonitor mon) {
         this.mon = mon;
-        this.os = os;
+
         this.format = getAudioFormat();
     }
 
     public void run() {
 //        DataOutputStream out = new DataOutputStream(os);
+        System.out.println("Started AudioWriter");
         DataLine.Info micInfo = new DataLine.Info(TargetDataLine.class, format);
         TargetDataLine mic = null;
         try {
