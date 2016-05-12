@@ -99,6 +99,10 @@ public class ClientMonitor {
 
     }
 
+    /**
+     * Puts an action into the lists of actions. Notifies the clients that an action is to be handled.
+     * @param action
+     */
     public synchronized void putAction(Action action) {
         actions.add(action);
         System.out.println("PutAction: " + "cmd: " + action.getCmd() + " content: " + action.getContent() + " sender: " + action.getSender() + " callId: " + action.getCallID());
@@ -126,10 +130,14 @@ public class ClientMonitor {
         if(action.getContent().equals("n")){
             System.out.println(action.getSender() + " Has rejected the call");
         } else {
-            System.out.println(action.getSender() + " is already in another call");
+            System.out.println(action.getSender() + " is busy in another call");
         }
     }
 
+    /**
+     * Sends an action to the corresponding call through the server.
+     * @param action
+     */
     public synchronized void sendToCall(Action action) {
         try {
             oos.writeObject(action);
@@ -138,6 +146,10 @@ public class ClientMonitor {
         }
     }
 
+    /**
+     * Connects a client by sending an action to the server.
+     * @param action
+     */
     public synchronized void connectClient(Action action) {
         try {
             oos.writeObject(action);
@@ -147,7 +159,10 @@ public class ClientMonitor {
         }
     }
 
-
+    /**
+     * Handles a request whether the client is busy, accept or rejects the call.
+     * @param action
+     */
     public synchronized void receiveRequest(Action action) {
 
         /**
@@ -199,7 +214,9 @@ public class ClientMonitor {
         return new AudioFormat(sampleRate, sampleSizeBits, channels, signed, bigEndian);
     }
 
-
+    /**
+     * Closes a call by shutting it down, sending it to the server.
+     */
     public synchronized void closeCall() {
         Action closeAction = new Action("content", getName(), CLOSE_CALL, callID);
         callID = -1;
@@ -213,10 +230,18 @@ public class ClientMonitor {
         speaker.close();
     }
 
+    /**
+     * Updates that a call is ended.. GUI
+     * @param action
+     */
     public synchronized void receiveCloseCall(Action action) {
         System.out.println(action.getSender() + " Has left the call");
     }
 
+    /**
+     * collects the id of the Call.
+     * @param action
+     */
     public synchronized void receiveCallID(Action action) {
         callID = action.getCallID();
         System.out.println("CallID is :" + action.getCallID());
@@ -234,6 +259,10 @@ public class ClientMonitor {
         }
     }
 
+    /**
+     *
+     * @param action
+     */
     public synchronized void receiveAudioData(Action action) {
         DataLine.Info speakerInfo = new DataLine.Info(SourceDataLine.class,format);
         try {
