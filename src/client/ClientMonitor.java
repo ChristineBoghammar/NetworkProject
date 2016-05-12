@@ -259,6 +259,10 @@ public class ClientMonitor {
         }
     }
 
+    /**
+     *
+     * @param action
+     */
     public synchronized void receiveAudioData(Action action) {
         DataLine.Info speakerInfo = new DataLine.Info(SourceDataLine.class,format);
         try {
