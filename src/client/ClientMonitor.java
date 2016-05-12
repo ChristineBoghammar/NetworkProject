@@ -130,6 +130,8 @@ public class ClientMonitor {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        new AudioWriter(this, os).start();
         System.out.println("cmd: " + action.getCmd() + " content: " + action.getContent() + " sender: " + action.getSender() + " callId: " + action.getCallList());
     }
 
