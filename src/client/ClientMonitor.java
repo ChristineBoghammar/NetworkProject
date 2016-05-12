@@ -24,7 +24,7 @@ public class ClientMonitor {
     private OutputStream os;
     private AudioFormat format;
     private SourceDataLine speaker;
-
+    private AudioWriter aw = null;
 
     private final int CONNECT = 0;
     private final int DISCONNECT = 1;
@@ -131,11 +131,14 @@ public class ClientMonitor {
             e.printStackTrace();
         }
 
-        new AudioWriter(this, os).start();
         System.out.println("cmd: " + action.getCmd() + " content: " + action.getContent() + " sender: " + action.getSender() + " callId: " + action.getCallList());
     }
 
     public synchronized void acceptCall(Action action) {
+        if(aw != null){
+            new AudioWriter(this, os).start();
+        }
+
         System.out.println(action.getSender() + " Has accepted the call");
     }
 
