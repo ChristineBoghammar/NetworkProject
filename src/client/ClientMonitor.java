@@ -191,7 +191,7 @@ public class ClientMonitor {
     }
 
     public void receiveFromCall(Action action) {
-        System.out.println(action.getContent());
+        System.out.println(action.getSender() + ": " + action.getContent());
     }
 }
 
