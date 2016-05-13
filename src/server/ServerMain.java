@@ -10,18 +10,26 @@ import java.net.UnknownHostException;
  * Created by christineboghammar on 26/04/16.
  */
 public class ServerMain {
+    private static int port;
+    private static String host;
 
     public static void main(String args[]) {
         ServerMonitor mon = new ServerMonitor();
         InetAddress addr = null;
+        if(args.length != 2) {
+            System.out.println("Must be two arguments");
+            System.exit(1);
+        }
         try {
-            addr = InetAddress.getByName("192.168.1.113");
+            port = Integer.parseInt(args[0]);
+            host = args[1];
+            addr = InetAddress.getByName(host);
             System.out.println(InetAddress.getLocalHost().getHostAddress());
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
 
-        try (ServerSocket server = new ServerSocket(30000, 50, addr)) {
+        try (ServerSocket server = new ServerSocket(port, 50, addr)) {
             while (true) {
                 try {
                     Socket connection = server.accept();
