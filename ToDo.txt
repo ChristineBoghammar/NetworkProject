@@ -5,9 +5,9 @@
 	[x] Close their connection to a call.
 	[x] Send text messages to all call participants.
 [] When above is completed. A sound stream should be sent between the call participants.
-	[] Implement Java Sound to send prerecorded audio to call participants
+	[x] Implement Java Sound to send prerecorded audio to call participants
 	[] Find a good buffer length so that audio packets arent sent too often and also do not cause a big delay. (50 ms of data is a possible start point)
-	
+
 [] Implement the possibility of sending a voicemail to other people. Should be possible to record the audio file and then send it to the other client directly through the monitor
 
 [] Implement a GUI so that the following is possible:
@@ -18,3 +18,6 @@
 		[] Have the ability to end a call.	
 	[] Show voicemails to the client
 
+** Problem **
+There is a significant delay with the audio stream. Possible problem is that the actionlist in ServerMonitor is overflowing with audio stream data.
+A solution could be to move the logic for sending audio data to a separate monitor on the server side or to lower the interval between sent audio stream data on the client side.

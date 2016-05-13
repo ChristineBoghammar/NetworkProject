@@ -135,11 +135,6 @@ public class ClientMonitor {
     }
 
     public synchronized void acceptCall(Action action) {
-        if(aw == null){
-            aw = new AudioWriter(this);
-            aw.start();
-        }
-
         System.out.println(action.getSender() + " Has accepted the call");
     }
 
@@ -275,6 +270,10 @@ public class ClientMonitor {
      */
     public synchronized void receiveCallID(Action action) {
         callID = action.getCallID();
+        if(aw == null){
+            aw = new AudioWriter(this);
+            aw.start();
+        }
         System.out.println("CallID is :" + action.getCallID());
     }
 
