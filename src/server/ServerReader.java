@@ -30,6 +30,7 @@ public class ServerReader extends Thread {
         try {
             Action action = null;
             while ((action = ((Action) ois.readObject())) != null) {
+
                 System.out.println("Action read: " + action.getSender() + " " + action.getCmd());
                 mon.putMessage(action);
             }
