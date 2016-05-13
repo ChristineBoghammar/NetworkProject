@@ -50,10 +50,8 @@ public class AudioWriter extends Thread {
         byte tmpBuff[] = new byte[mic.getBufferSize()];
         mic.start();
         while (mon.getCallID() != -1) {
-            System.out.println("Reading from mic.");
             int count = mic.read(tmpBuff, 0, tmpBuff.length);
             if (count > 0) {
-                System.out.println("Writing buffer to server.");
                 mon.putAction(new Action(tmpBuff, mon.getName(), SEND_AUDIO_DATA, mon.getCallID()));
                 tmpBuff = new byte[mic.getBufferSize()];
                 try {
@@ -65,6 +63,7 @@ public class AudioWriter extends Thread {
             }
 
         }
+        return;
     }
 
     private AudioFormat getAudioFormat() {

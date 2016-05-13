@@ -58,6 +58,7 @@ public class ServerMonitor {
                 e.printStackTrace();
             }
         }
+        System.out.println("ActionList size: " + actions.size());
         return actions.poll();
 
     }
