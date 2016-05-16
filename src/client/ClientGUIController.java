@@ -9,6 +9,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
+import javafx.scene.layout.AnchorPane;
 import protocol.Action;
 
 import java.net.URL;
@@ -47,18 +48,17 @@ public class ClientGUIController implements Initializable {
     private ListView<String> connectedContacts;
 
 
-
-    public void setMonitor(ClientMonitor mon){
+    public void setMonitor(ClientMonitor mon) {
         this.mon = mon;
     }
 
-    public void setGUI(ClientGUI gui){
+    public void setGUI(ClientGUI gui) {
         this.gui = gui;
     }
 
 
     @Override
-    public void initialize(URL fxmlFileLocation, ResourceBundle resources){
+    public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
         assert callButton != null : "fx:id=\"myButton\" was not injected: check your FXML file 'startGui.fxml'.";
         assert connectedContacts != null : "fx:id=\"connectedContacts\" was not injected: check your FXML file 'startGui.fxml'.";
 
@@ -70,27 +70,31 @@ public class ClientGUIController implements Initializable {
             public void handle(ActionEvent event) {
                 ArrayList<String> callList = mon.getCallList();
                 System.out.println("Tryckte på callButton");
-                if(callList.size() > 0){
+                if (callList.size() > 0) {
                     mon.putAction(new Action(null, mon.getName(), INITIATE_CALL, callList));
                 } else {
                     System.out.println("No users selected for call");
                 }
             }
         });
-
         connectedContacts.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         connectedContacts.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                 callList.addAll(connectedContacts.getSelectionModel().getSelectedItems());
+
             }
         });
 
     }
 
+    public ArrayList<String> getSelectedList(){
+        return callList;
+    }
+
     public void updateContactList(ArrayList<String> updatedList) {
-        for(String participant : updatedList){
-            if(!connectedContacts.getItems().contains(participant)){
+        for (String participant : updatedList) {
+            if (!connectedContacts.getItems().contains(participant)) {
                 connectedContacts.getItems().add(participant);
             }
         }
