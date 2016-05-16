@@ -340,7 +340,7 @@ public class ServerMonitor {
      * Handles the disconnected client and updated the remaining clients with a list of connected clients.
      * @param socket
      */
-    public void disconnectClient(Socket socket) {
+    public synchronized void disconnectClient(Socket socket) {
         String disconnectedClient = "";
         ArrayList<String> contacts = new ArrayList<String>();
         for (Participant p : participants) {
