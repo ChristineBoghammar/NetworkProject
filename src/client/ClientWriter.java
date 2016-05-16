@@ -19,7 +19,6 @@ public class ClientWriter extends Thread {
     }
 
     private final int CONNECT = 0;
-    private final int DISCONNECT = 1;
     private final int INITIATE_CALL = 2;
     private final int ACCEPT_CALL = 3;
     private final int CLOSE_CALL = 4;
@@ -41,25 +40,27 @@ public class ClientWriter extends Thread {
             System.out.println("Action polled: " + action.getSender() + " " + action.getCmd());
 
             switch (action.getCmd()) {
+
                 case CONNECT:
                     mon.connectClient(action);
                     break;
-                case DISCONNECT:
 
-                    break;
                 case INITIATE_CALL:
                     mon.requestCall(action);
                     break;
 
                 case ACCEPT_CALL:
-                    mon.receiveAcceptCall(action);
+                    mon.acceptCall(action);
                     break;
+
                 case CLOSE_CALL:
                     mon.closeCall();
                     break;
+
                 case COMMUNICATE_TO_CALL:
                     mon.sendToCall(action);
                     break;
+
                 case RECIEVE_REQUESTED_CALL:
                     try {
                         mon.receiveRequest(action);
@@ -67,26 +68,34 @@ public class ClientWriter extends Thread {
                         e.printStackTrace();
                     }
                     break;
+
                 case REJECT_CALL:
-                    mon.receiveRejectCall(action);
+                    mon.rejectCall(action);
                     break;
+
                 case RECIEVE_CLOSE_CALL:
                     mon.receiveCloseCall(action);
                     break;
+
                 case RECIEVE_CALL_ID:
                     mon.receiveCallID(action);
                     break;
+
                 case RECIEVE_FROM_CALL:
                     mon.receiveFromCall(action);
                     break;
+
                 case SEND_AUDIO_DATA:
                     mon.sendAudioData(action);
                     break;
+
                 case RECIEVE_AUDIO_DATA:
                     mon.receiveAudioData(action);
                     break;
+
                 case UPDATE_CLIENT_LIST:
                     mon.updateContactList(action);
+                    break;
             }
         }
     }

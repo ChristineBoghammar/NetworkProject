@@ -7,10 +7,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.layout.AnchorPane;
 import protocol.Action;
-
-import java.lang.reflect.Array;
 import java.net.URL;
 import java.util.*;
 
@@ -91,7 +88,6 @@ public class ClientGUIController implements Initializable {
                 }
             }
         });
-
     }
 
     public void setLabelName(String name){
