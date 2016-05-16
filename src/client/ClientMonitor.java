@@ -143,7 +143,7 @@ public class ClientMonitor {
             e.printStackTrace();
         }
 
-        System.out.println("cmd: " + action.getCmd() + " content: " + action.getContent() + " sender: " + action.getSender() + " callId: " + action.getToCallList());
+        System.out.println("cmd: " + action.getCmd() + " content: " + action.getContent() + " sender: " + action.getSender() + " callId: " + action.getList());
     }
 
     public synchronized void acceptCall(Action action) {
@@ -189,8 +189,7 @@ public class ClientMonitor {
      * Handles a request whether the client is busy, accept or rejects the call.
      * @param action
      */
-    public synchronized void receiveRequest(Action action) {
-
+    public synchronized void receiveRequest(Action action) throws IOException {
 
         if(callID != -1){
             gui.incomingCall(action.getSender());
@@ -203,8 +202,6 @@ public class ClientMonitor {
                 e.printStackTrace();
             }
         }
-
-
 
         /**
          * Om användaren godkänner samtalet
@@ -230,6 +227,7 @@ public class ClientMonitor {
         }
         aw = new AudioWriter(this);
         aw.start();
+
         /**
          * Om användaren ej godkänner samtalet
          */
@@ -332,8 +330,15 @@ public class ClientMonitor {
         }
     }
 
+    /**
+     * Collects all the connected clients and removes the current client to show the rest in GUI.
+     * @param action, with connected clients
+     */
     public void updateContactList(Action action) {
-        ArrayList<String> updatedList = action.getToCallList();
+        //gets the list of conected clients
+        ArrayList<String> updatedList = action.getList();
+
+        //(List) with one element being the curent client
         ArrayList<String> toRemove = new ArrayList<String>();
         for(String contact : updatedList){
             if(contact.equals(this.getName())){

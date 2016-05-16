@@ -66,7 +66,7 @@ public class Action implements Serializable {
         return callID;
     }
 
-    public ArrayList<String> getToCallList() {
+    public ArrayList<String> getList() {
         return peopleToCall;
     }
 
