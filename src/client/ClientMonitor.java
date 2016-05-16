@@ -77,7 +77,7 @@ public class ClientMonitor {
         cgc.setLabelName(name);
     }
 
-    public synchronized ArrayList<String> getCallList(){
+    public synchronized ArrayList<String> getCallList() {
         return callList;
     }
 
@@ -115,6 +115,7 @@ public class ClientMonitor {
 
     /**
      * Puts an action into the lists of actions. Notifies the clients that an action is to be handled.
+     *
      * @param action
      */
     public synchronized void putAction(Action action) {
@@ -126,7 +127,7 @@ public class ClientMonitor {
     @SuppressWarnings("Duplicates")
     public synchronized void requestCall(Action action) {
 
-        DataLine.Info speakerInfo = new DataLine.Info(SourceDataLine.class,format);
+        DataLine.Info speakerInfo = new DataLine.Info(SourceDataLine.class, format);
         try {
             speaker = (SourceDataLine) AudioSystem.getLine(speakerInfo);
             System.out.println(speaker.toString());
@@ -146,20 +147,29 @@ public class ClientMonitor {
         System.out.println("cmd: " + action.getCmd() + " content: " + action.getContent() + " sender: " + action.getSender() + " callId: " + action.getToCallList());
     }
 
-    public synchronized void acceptCall(Action action) {
+    public synchronized void receiveAcceptCall(Action action) {
         System.out.println(action.getSender() + " Has accepted the call");
     }
 
-    public synchronized void rejectCall(Action action) {
-        if(action.getContent().equals("n")){
+    public synchronized void receiveRejectCall(Action action) {
+        if (action.getContent().equals("n")) {
             System.out.println(action.getSender() + " Has rejected the call");
         } else {
             System.out.println(action.getSender() + " is busy in another call");
         }
     }
 
+    public synchronized void acceptCall(Action action) {
+
+    }
+
+    public synchronized void rejectCall(Action action) {
+
+    }
+
     /**
      * Sends an action to the corresponding call through the server.
+     *
      * @param action
      */
     public synchronized void sendToCall(Action action) {
@@ -173,6 +183,7 @@ public class ClientMonitor {
 
     /**
      * Connects a client by sending an action to the server.
+     *
      * @param action
      */
     public synchronized void connectClient(Action action) {
@@ -187,63 +198,52 @@ public class ClientMonitor {
 
     /**
      * Handles a request whether the client is busy, accept or rejects the call.
+     *
      * @param action
      */
-    public synchronized void receiveRequest(Action action) {
+    public synchronized void receiveRequest(Action action) throws IOException {
 
+        if (callID == -1) {
+            if (gui.incomingCall(action.getSender())) { // Om användaren godkänner eller ej
+                System.out.println("Accepterade samtalet");
+                DataLine.Info speakerInfo = new DataLine.Info(SourceDataLine.class, format);
+                try {
+                    speaker = (SourceDataLine) AudioSystem.getLine(speakerInfo);
+                    System.out.println(speaker.toString());
+                    speaker.open(format);
+                } catch (LineUnavailableException e) {
+                    e.printStackTrace();
+                }
+                speaker.start();
 
-        if(callID != -1){
-            gui.incomingCall(action.getSender());
-        } else { //Om användaren är upptagen
-            Action response = new Action("b",getName(), REJECT_CALL, action.getCallID());
-            try {
-                oos.writeObject(response);
-                System.out.println("connectClient Action written to server");
-            } catch (IOException e) {
-                e.printStackTrace();
+                callID = action.getCallID();
+                Action response = new Action("y", getName(), ACCEPT_CALL, action.getCallID());
+                try {
+                    oos.writeObject(response);
+                    oos.flush();
+                    System.out.println("receiveRequest Action written to server");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                aw = new AudioWriter(this);
+                aw.start();
+
+            } else {
+                Action response = new Action("n", getName(), REJECT_CALL, action.getCallID());
+                try {
+                    oos.writeObject(response);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
             }
+
+
         }
-
-
-
-        /**
-         * Om användaren godkänner samtalet
-         */
-        DataLine.Info speakerInfo = new DataLine.Info(SourceDataLine.class,format);
-        try {
-            speaker = (SourceDataLine) AudioSystem.getLine(speakerInfo);
-            System.out.println(speaker.toString());
-            speaker.open(format);
-        } catch (LineUnavailableException e) {
-            e.printStackTrace();
-        }
-        speaker.start();
-
-        callID = action.getCallID();
-        Action response = new Action("y", getName(), ACCEPT_CALL, action.getCallID());
-        try {
-            oos.writeObject(response);
-            oos.flush();
-            System.out.println("receiveRequest Action written to server");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        aw = new AudioWriter(this);
-        aw.start();
-        /**
-         * Om användaren ej godkänner samtalet
-         */
-//        Action response = new Action("n",getName(), REJECT_CALL, action.getCallID());
-//        try {
-//            oos.writeObject(response);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-
     }
 
     @SuppressWarnings("Duplicates")
-    private AudioFormat getAudioFormat(){
+    private AudioFormat getAudioFormat() {
         float sampleRate = 16000.0F;
         int sampleSizeBits = 16;
         int channels = 1;
@@ -272,6 +272,7 @@ public class ClientMonitor {
 
     /**
      * Updates that a call is ended.. GUI
+     *
      * @param action
      */
     public synchronized void receiveCloseCall(Action action) {
@@ -280,11 +281,12 @@ public class ClientMonitor {
 
     /**
      * collects the id of the Call.
+     *
      * @param action
      */
     public synchronized void receiveCallID(Action action) {
         callID = action.getCallID();
-        if(aw == null){
+        if (aw == null) {
             aw = new AudioWriter(this);
             aw.start();
         }
@@ -305,19 +307,18 @@ public class ClientMonitor {
     }
 
     /**
-     *
      * @param action
      */
     public synchronized void receiveAudioData(Action action) {
 
         byte[] data = action.getAudioData();
         ByteArrayInputStream bais = new ByteArrayInputStream(data);
-        AudioInputStream ais = new AudioInputStream(bais,format,data.length);
+        AudioInputStream ais = new AudioInputStream(bais, format, data.length);
         int bytesRead = 0;
         try {
-            if((bytesRead = ais.read(data)) != -1){
+            if ((bytesRead = ais.read(data)) != -1) {
                 System.out.println("Writing to audio output.");
-                speaker.write(data,0,bytesRead);
+                speaker.write(data, 0, bytesRead);
 
             }
         } catch (IOException e) {
@@ -335,8 +336,8 @@ public class ClientMonitor {
     public void updateContactList(Action action) {
         ArrayList<String> updatedList = action.getToCallList();
         ArrayList<String> toRemove = new ArrayList<String>();
-        for(String contact : updatedList){
-            if(contact.equals(this.getName())){
+        for (String contact : updatedList) {
+            if (contact.equals(this.getName())) {
                 toRemove.add(contact);
             }
         }

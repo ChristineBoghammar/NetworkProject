@@ -58,6 +58,7 @@ public class ActiveCallGUIController implements Initializable {
             @Override
             public void handle(ActionEvent event) {
                 gui.startScreen();
+                mon.putAction(new Action("null", mon.getName(), CLOSE_CALL, mon.getCallID()));
             }
         });
 

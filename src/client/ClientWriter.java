@@ -2,6 +2,7 @@ package client;
 
 import protocol.Action;
 
+import java.io.IOException;
 import java.net.Socket;
 
 /**
@@ -51,7 +52,7 @@ public class ClientWriter extends Thread {
                     break;
 
                 case ACCEPT_CALL:
-                    mon.acceptCall(action);
+                    mon.receiveAcceptCall(action);
                     break;
                 case CLOSE_CALL:
                     mon.closeCall();
@@ -60,10 +61,14 @@ public class ClientWriter extends Thread {
                     mon.sendToCall(action);
                     break;
                 case RECIEVE_REQUESTED_CALL:
-                    mon.receiveRequest(action);
+                    try {
+                        mon.receiveRequest(action);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     break;
                 case REJECT_CALL:
-                    mon.rejectCall(action);
+                    mon.receiveRejectCall(action);
                     break;
                 case RECIEVE_CLOSE_CALL:
                     mon.receiveCloseCall(action);

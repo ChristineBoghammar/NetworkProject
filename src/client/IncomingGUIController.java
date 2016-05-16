@@ -1,16 +1,12 @@
 package client;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.layout.AnchorPane;
-import protocol.Action;
 
-import java.lang.reflect.Array;
+import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 
@@ -39,6 +35,9 @@ public class IncomingGUIController implements Initializable {
     private ArrayList<String> callList;
 
     @FXML
+    private Label callerName;
+
+    @FXML
     private Button acceptButton;
 
     @FXML
@@ -57,13 +56,19 @@ public class IncomingGUIController implements Initializable {
     public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
         assert acceptButton != null : "fx:id=\"acceptButton\" was not injected: check your FXML file 'startGui.fxml'.";
         assert rejectButton != null : "fx:id=\"rejectButton\" was not injected: check your FXML file 'startGui.fxml'.";
+        assert callerName != null : "fx:id=\"rejectButton\" was not injected: check your FXML file 'startGui.fxml'.";
+
 
         System.out.println("Initialized 'incoming' controller");
 
         acceptButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                gui.activateCall();
+                try {
+                    gui.activateCall();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -74,5 +79,9 @@ public class IncomingGUIController implements Initializable {
             }
         });
 
+    }
+
+    public void setCallerName(String name) {
+        callerName.setText(name);
     }
 }
