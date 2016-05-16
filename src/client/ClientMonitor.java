@@ -72,6 +72,7 @@ public class ClientMonitor {
         }
         this.format = getAudioFormat();
         this.speaker = null;
+        cgc.setLabelName(name);
     }
 
     public synchronized ArrayList<String> getCallList(){

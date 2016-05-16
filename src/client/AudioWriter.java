@@ -49,7 +49,7 @@ public class AudioWriter extends Thread {
         byte tmpBuff[];
         mic.start();
         long time;
-        while (mon.getCallID() != -1 && (mic.read((tmpBuff = new byte[mic.getBufferSize() / 8]), 0, tmpBuff.length)) > 0) {
+        while (mon.getCallID() != -1 && (mic.read((tmpBuff = new byte[mic.getBufferSize() / 5]), 0, tmpBuff.length)) > 0) {
             time = System.currentTimeMillis();
             mon.putAction(new Action(tmpBuff, mon.getName(), SEND_AUDIO_DATA, mon.getCallID()));
             try {

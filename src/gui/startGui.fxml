@@ -45,10 +45,17 @@
                      <children>
                         <AnchorPane prefHeight="30.0" prefWidth="66.0">
                            <children>
-                              <Label text="Name:" textAlignment="CENTER" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="1.0" AnchorPane.rightAnchor="1.0" AnchorPane.topAnchor="1.0" />
+                              <Label alignment="CENTER_RIGHT" text="Name:" textAlignment="CENTER" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="1.0" AnchorPane.rightAnchor="1.0" AnchorPane.topAnchor="1.0" />
                            </children>
                         </AnchorPane>
-                        <AnchorPane prefHeight="30.0" prefWidth="131.0" GridPane.columnIndex="1" />
+                        <AnchorPane prefHeight="30.0" prefWidth="131.0" GridPane.columnIndex="1">
+                           <children>
+                              <Label fx:id="labelName" alignment="CENTER" contentDisplay="CENTER" prefHeight="30.0" prefWidth="100.0" text="-" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <font>
+                                    <Font name="System Bold" size="13.0" />
+                                 </font>
+                              </Label>
+                           </children></AnchorPane>
                      </children>
                   </GridPane>
                </children>

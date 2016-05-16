@@ -6,9 +6,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-import javafx.scene.control.SelectionMode;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import protocol.Action;
 
@@ -46,6 +44,9 @@ public class ClientGUIController implements Initializable {
     @FXML
     private ListView<String> connectedContacts;
 
+    @FXML
+    private Label labelName;
+
 
     public void setMonitor(ClientMonitor mon) {
         this.mon = mon;
@@ -60,7 +61,7 @@ public class ClientGUIController implements Initializable {
     public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
         assert callButton != null : "fx:id=\"myButton\" was not injected: check your FXML file 'startGui.fxml'.";
         assert connectedContacts != null : "fx:id=\"connectedContacts\" was not injected: check your FXML file 'startGui.fxml'.";
-
+        assert labelName != null : "fx:id=\"labelName\" was not injected: check your FXML file 'startGui.fxml'.";
         callList = new ArrayList<String>();
         System.out.println("Initialized controller");
 
@@ -91,6 +92,10 @@ public class ClientGUIController implements Initializable {
             }
         });
 
+    }
+
+    public void setLabelName(String name){
+        labelName.setText(name);
     }
 
     public ArrayList<String> getSelectedList(){
