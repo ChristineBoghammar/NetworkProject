@@ -1,14 +1,19 @@
 package client;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.ListView;
+import javafx.scene.control.SelectionMode;
 import protocol.Action;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 /**
@@ -33,9 +38,13 @@ public class ClientGUIController implements Initializable {
     private ClientMonitor mon;
     private ClientGUI gui;
 
+    private ArrayList<String> callList;
 
     @FXML
     private Button callButton;
+
+    @FXML
+    private ListView<String> connectedContacts;
 
 
 
@@ -51,6 +60,9 @@ public class ClientGUIController implements Initializable {
     @Override
     public void initialize(URL fxmlFileLocation, ResourceBundle resources){
         assert callButton != null : "fx:id=\"myButton\" was not injected: check your FXML file 'startGui.fxml'.";
+        assert connectedContacts != null : "fx:id=\"connectedContacts\" was not injected: check your FXML file 'startGui.fxml'.";
+
+        callList = new ArrayList<String>();
         System.out.println("Initialized controller");
 
         callButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -66,6 +78,21 @@ public class ClientGUIController implements Initializable {
             }
         });
 
+        connectedContacts.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        connectedContacts.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                callList.addAll(connectedContacts.getSelectionModel().getSelectedItems());
+            }
+        });
 
+    }
+
+    public void updateContactList(ArrayList<String> updatedList) {
+        for(String participant : updatedList){
+            if(!connectedContacts.getItems().contains(participant)){
+                connectedContacts.getItems().add(participant);
+            }
+        }
     }
 }

@@ -40,17 +40,18 @@ public class ClientGUI extends Application {
             String name = keyboard.nextLine();
 
             s = new Socket(host, port);
-            ClientMonitor mon = new ClientMonitor(name, s);
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("../gui/startGui.fxml"));
+            Parent root = loader.load();
+            ClientGUIController cgc = (ClientGUIController) loader.getController();
+            ClientMonitor mon = new ClientMonitor(name, s, cgc);
             ClientReader cr = new ClientReader(mon, s);
             ClientWriter cw = new ClientWriter(mon, s);
             cr.start();
             cw.start();
             mon.putAction(new Action(name, name, 0, -1));
 
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("../gui/startGui.fxml"));
-            Parent root = loader.load();
 
-            ClientGUIController cgc = (ClientGUIController) loader.getController();
             cgc.setGUI(this);
             cgc.setMonitor(mon);
 

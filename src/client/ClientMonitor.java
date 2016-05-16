@@ -1,7 +1,6 @@
 package client;
 
 import protocol.Action;
-import server.Call;
 
 import javax.sound.sampled.*;
 import java.io.ByteArrayInputStream;
@@ -11,6 +10,7 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by johan on 2016-04-28.
@@ -27,6 +27,8 @@ public class ClientMonitor {
     private AudioFormat format;
     private SourceDataLine speaker;
     private AudioWriter aw = null;
+    private List<String> connectedClients;
+    private ClientGUIController cgc;
 
     private final int CONNECT = 0;
     private final int DISCONNECT = 1;
@@ -41,6 +43,8 @@ public class ClientMonitor {
     private final int RECIEVE_FROM_CALL = 10;
     private final int SEND_AUDIO_DATA = 11;
     private final int RECIEVE_AUDIO_DATA = 12;
+    private final int UPDATE_CLIENT_LIST = 13;
+
 
     /**
      * Possible cmd's are:
@@ -53,10 +57,11 @@ public class ClientMonitor {
      * 6 - Receive requested Call
      */
 
-    public ClientMonitor(String name, Socket s) {
+    public ClientMonitor(String name, Socket s, ClientGUIController cgc) {
         this.actions = new LinkedList<Action>();
         this.name = name;
         this.socket = s;
+        this.cgc = cgc;
         callID = -1;
         this.callList = new ArrayList<String>();
         try {
@@ -137,7 +142,7 @@ public class ClientMonitor {
             e.printStackTrace();
         }
 
-        System.out.println("cmd: " + action.getCmd() + " content: " + action.getContent() + " sender: " + action.getSender() + " callId: " + action.getCallList());
+        System.out.println("cmd: " + action.getCmd() + " content: " + action.getContent() + " sender: " + action.getSender() + " callId: " + action.getList());
     }
 
     public synchronized void acceptCall(Action action) {
@@ -322,6 +327,18 @@ public class ClientMonitor {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void updateContactList(Action action) {
+        ArrayList<String> updatedList = action.getList();
+        ArrayList<String> toRemove = new ArrayList<String>();
+        for(String contact : updatedList){
+            if(contact.equals(this.getName())){
+                toRemove.add(contact);
+            }
+        }
+        updatedList.removeAll(toRemove);
+        cgc.updateContactList(updatedList);
     }
 }
 

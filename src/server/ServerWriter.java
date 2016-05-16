@@ -52,7 +52,7 @@ public class ServerWriter extends Thread  {
                     mon.closeCall(action);
                     break;
                 case COMMUNICATE_TO_CALL:
-                    mon.sendToCall(action);
+//                    mon.sendToCall(action);
                     break;
                 case RECIEVE_REQUESTED_CALL:
 

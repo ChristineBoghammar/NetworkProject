@@ -3,7 +3,6 @@ package server;
 import protocol.Action;
 
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -30,6 +29,7 @@ public class ServerMonitor {
     private final int RECIEVE_FROM_CALL = 10;
     private final int SEND_AUDIO_DATA = 11;
     private final int RECIEVE_AUDIO_DATA = 12;
+    private final int UPDATE_CLIENT_LIST = 13;
 
 
     /**
@@ -109,12 +109,46 @@ public class ServerMonitor {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        ArrayList<String> contacts = new ArrayList<String>();
+        for(Participant p : participants){
+                contacts.add(p.getName());
+        }
+
+        Action updateListAction = new Action(null, action.getSender(), UPDATE_CLIENT_LIST, contacts);
+
+        for(Participant p : participants){
+            try {
+                p.getObjectOutputStream().writeObject(updateListAction);
+                p.getObjectOutputStream().flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
         System.out.println("Client connected: " + action.getSender());
         System.out.println(participants.size());
     }
 
     public synchronized void disconnectClient(Action action) {
         participants.remove(getParticipant(action.getSender()));
+
+        ArrayList<String> contacts = new ArrayList<String>();
+        for(Participant p : participants){
+            contacts.add(p.getName());
+        }
+
+        Action updateListAction = new Action(null, action.getSender(), UPDATE_CLIENT_LIST, contacts);
+
+        for(Participant p : participants){
+            try {
+                p.getObjectOutputStream().writeObject(updateListAction);
+                p.getObjectOutputStream().flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 
     public synchronized ArrayList<Participant> getCallParticipants(ArrayList<String> callList) {
@@ -129,20 +163,20 @@ public class ServerMonitor {
         return participantToCall;
     }
 
-    public synchronized void sendToCall(Action action) {
-        Action sendAction = new Action(action.getContent(), action.getSender(), RECIEVE_FROM_CALL, action.getCallID());
-        for (Participant p : getCall(action.getCallID()).getAcceptedCallList()) {
-            if(!p.getName().equals(action.getSender()))
-            try {
-                p.getObjectOutputStream().writeObject(sendAction);
-                p.getObjectOutputStream().flush();
-//                p.getSocket().getOutputStream().write(action.getContent().getBytes());
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-    }
+//    public synchronized void sendToCall(Action action) {
+//        Action sendAction = new Action(action.getContent(), action.getSender(), RECIEVE_FROM_CALL, action.getCallID());
+//        for (Participant p : getCall(action.getCallID()).getAcceptedCallList()) {
+//            if(!p.getName().equals(action.getSender()))
+//            try {
+//                p.getObjectOutputStream().writeObject(sendAction);
+//                p.getObjectOutputStream().flush();
+////                p.getSocket().getOutputStream().write(action.getContent().getBytes());
+//            } catch (IOException e) {
+//                // TODO Auto-generated catch block
+//                e.printStackTrace();
+//            }
+//        }
+//    }
 
 
     public synchronized void requestCall(Action action) {
@@ -150,7 +184,7 @@ public class ServerMonitor {
         ArrayList<Participant> activeCallList = new ArrayList<Participant>();
         activeCallList.add(getParticipant(action.getSender()));
         ArrayList<Participant> invited = new ArrayList<Participant>();
-        for (String p : action.getCallList()) {
+        for (String p : action.getList()) {
             invited.add(getParticipant(p));
         }
         Call c = new Call(invited, uniqueID++);
@@ -158,7 +192,7 @@ public class ServerMonitor {
         c.getAcceptedCallList().add(getParticipant(action.getSender()));
         Action reqAction = new Action(action.getContent(), action.getSender(), RECIEVE_REQUESTED_CALL, c.getID());
         System.out.println(reqAction.getContent() + " " + reqAction.getSender() + " " + reqAction.getCmd() + " " + reqAction.getCallID());
-        for (Participant p : getCallParticipants(action.getCallList())) {
+        for (Participant p : getCallParticipants(action.getList())) {
             try {
                 p.getObjectOutputStream().writeObject(reqAction);
                 p.getObjectOutputStream().flush();
