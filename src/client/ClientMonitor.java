@@ -29,6 +29,7 @@ public class ClientMonitor {
     private AudioWriter aw = null;
     private List<String> connectedClients;
     private ClientGUIController cgc;
+    private ClientGUI gui;
 
     private final int CONNECT = 0;
     private final int DISCONNECT = 1;
@@ -57,11 +58,12 @@ public class ClientMonitor {
      * 6 - Receive requested Call
      */
 
-    public ClientMonitor(String name, Socket s, ClientGUIController cgc) {
+    public ClientMonitor(String name, Socket s, ClientGUIController cgc, ClientGUI gui) {
         this.actions = new LinkedList<Action>();
         this.name = name;
         this.socket = s;
         this.cgc = cgc;
+        this.gui = gui;
         callID = -1;
         this.callList = new ArrayList<String>();
         try {
@@ -189,18 +191,20 @@ public class ClientMonitor {
      */
     public synchronized void receiveRequest(Action action) {
 
-        /**
-         * Om användaren är upptagen
-         */
-//        if(callID != -1){
-//            Action response = new Action("b",getName(), REJECT_CALL, action.getCallID());
-//            try {
-//                oos.writeObject(response);
-//                System.out.println("connectClient Action written to server");
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
+
+        if(callID != -1){
+            gui.incomingCall(action.getSender());
+        } else { //Om användaren är upptagen
+            Action response = new Action("b",getName(), REJECT_CALL, action.getCallID());
+            try {
+                oos.writeObject(response);
+                System.out.println("connectClient Action written to server");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+
 
         /**
          * Om användaren godkänner samtalet

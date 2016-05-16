@@ -11,7 +11,7 @@
 [] Implement the possibility of sending a voicemail to other people. Should be possible to record the audio file and then send it to the other client directly through the monitor
 
 [] Implement a GUI so that the following is possible:
-	[] Show a list of active clients
+	[x] Show a list of active clients
 	[] Have the ability to call several participants
 		[] Have the ability to accept a call.		
 		[] Have the ability to reject a call.		

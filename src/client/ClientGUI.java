@@ -19,12 +19,14 @@ import java.util.Scanner;
 public class ClientGUI extends Application {
     public static String host = "192.168.1.113";
     public static int port = 30000;
+    private Stage primaryStage;
 
     public static void main(String args[]) {
         launch(args);
     }
 
     public void start(Stage primaryStage) throws IOException {
+        this.primaryStage = primaryStage;
         final List<String> params = getParameters().getRaw();
         if(params.size() != 2){
             System.out.println("Two arguments have to be applied, restart the system");
@@ -41,10 +43,23 @@ public class ClientGUI extends Application {
 
             s = new Socket(host, port);
 
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("../gui/startGui.fxml"));
-            Parent root = loader.load();
-            ClientGUIController cgc = (ClientGUIController) loader.getController();
-            ClientMonitor mon = new ClientMonitor(name, s, cgc);
+            FXMLLoader loader1 = new FXMLLoader(getClass().getResource("../gui/startGui.fxml"));
+            Parent start = loader1.load();
+            ClientGUIController cgc = (ClientGUIController) loader1.getController();
+
+            FXMLLoader loader2 = new FXMLLoader(getClass().getResource("../incomingCall.fxml"));
+            Parent incoming = loader2.load();
+            IncomingGUIController igc = (IncomingGUIController) loader1.getController();
+
+            FXMLLoader loader3 = new FXMLLoader(getClass().getResource("../gui/activeCall.fxml"));
+            Parent activeCall = loader3.load();
+
+
+
+
+
+
+            ClientMonitor mon = new ClientMonitor(name, s, cgc, this);
             ClientReader cr = new ClientReader(mon, s);
             ClientWriter cw = new ClientWriter(mon, s);
             cr.start();
@@ -55,7 +70,8 @@ public class ClientGUI extends Application {
             cgc.setGUI(this);
             cgc.setMonitor(mon);
 
-            Scene scene = new Scene(root, 600, 400);
+            Scene scene = new Scene(start, 600, 400);
+
 
             primaryStage.setTitle("Skajp");
             primaryStage.setScene(scene);
@@ -77,6 +93,26 @@ public class ClientGUI extends Application {
             e1.printStackTrace();
         }
 
+
+    }
+
+    public void activateCall() {
+
+    }
+
+    public void incomingCall(String sender) throws IOException {
+        FXMLLoader loader2 = new FXMLLoader(getClass().getResource("../incomingCall.fxml"));
+        Parent incoming = loader2.load();
+        IncomingGUIController igc = (IncomingGUIController) loader2.getController();
+
+        Scene incScene = new Scene(incoming, 600, 400);
+
+        primaryStage.setTitle("Incoming");
+        primaryStage.setScene(incScene);
+        primaryStage.show();
+    }
+
+    public void startScreen() {
 
     }
 }

@@ -10,7 +10,7 @@
 <?import javafx.scene.text.Font?>
 
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.IncomingGUIController">
    <children>
       <SplitPane dividerPositions="0.7110552763819096" orientation="VERTICAL" prefHeight="400.0" prefWidth="400.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <items>
@@ -31,8 +31,8 @@
             </AnchorPane>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="398.0">
                <children>
-                  <Button layoutX="128.0" layoutY="42.0" mnemonicParsing="false" text="Accept" />
-                  <Button layoutX="213.0" layoutY="42.0" mnemonicParsing="false" text="Reject" />
+                  <Button fx:id="acceptButton" layoutX="128.0" layoutY="42.0" mnemonicParsing="false" text="Accept" />
+                  <Button fx:id="rejectButton" layoutX="213.0" layoutY="42.0" mnemonicParsing="false" text="Reject" />
                </children>
             </AnchorPane>
         </items>
