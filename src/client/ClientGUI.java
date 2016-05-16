@@ -105,6 +105,7 @@ public class ClientGUI extends Application {
 
     public boolean incomingCall(String sender) throws IOException {
         System.out.println("Got to incoming call");
+
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Incoming call");
         alert.setHeaderText(sender + " is calling you");

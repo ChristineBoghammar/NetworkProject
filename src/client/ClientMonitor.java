@@ -1,5 +1,6 @@
 package client;
 
+import javafx.application.Platform;
 import protocol.Action;
 
 import javax.sound.sampled.*;
@@ -11,6 +12,8 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 
 /**
  * Created by johan on 2016-04-28.
@@ -189,15 +192,41 @@ public class ClientMonitor {
         }
     }
 
+    public synchronized  void setAcceptCall(boolean bool){
+        this.accept = bool;
+    }
+
     /**
      * Handles a request whether the client is busy, accept or rejects the call.
      *
      * @param action
      */
-    public synchronized void receiveRequest(Action action) throws IOException {
+    boolean accept = false;
 
+
+    public synchronized void receiveRequest(Action action) throws IOException {
+        accept = false;
         if (callID == -1) {
-            if (gui.incomingCall(action.getSender())) { // Om användaren godkänner eller ej
+            Runnable runnable = () -> {
+                try {
+                    accept = gui.incomingCall(action.getSender());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            };
+            FutureTask<Void> task = new FutureTask<>(runnable, null);
+            Platform.runLater(task);
+            try {
+                task.get();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+
+
+            System.out.println(accept);
+            if (accept) { // Om användaren godkänner eller ej
                 System.out.println("Accepterade samtalet");
                 DataLine.Info speakerInfo = new DataLine.Info(SourceDataLine.class, format);
                 try {
@@ -238,13 +267,6 @@ public class ClientMonitor {
             }
         }
 
-
-//        Action response = new Action("n",getName(), REJECT_CALL, action.getCallID());
-//        try {
-//            oos.writeObject(response);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
 
     }
 
