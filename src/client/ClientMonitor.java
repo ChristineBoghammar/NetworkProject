@@ -160,7 +160,6 @@ public class ClientMonitor {
     }
 
 
-
     /**
      * Sends an action to the corresponding call through the server.
      *
@@ -196,7 +195,6 @@ public class ClientMonitor {
      * @param action
      */
     public synchronized void receiveRequest(Action action) throws IOException {
-<<<<<<< HEAD
 
         if (callID == -1) {
             if (gui.incomingCall(action.getSender())) { // Om användaren godkänner eller ej
@@ -230,45 +228,17 @@ public class ClientMonitor {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-=======
->>>>>>> 0f9b4a8a289b907aa519a942dc8b684cdadb056a
-
             }
-<<<<<<< HEAD
-
-
+        } else {
+            Action response = new Action("b", getName(), REJECT_CALL, action.getCallID());
+            try {
+                oos.writeObject(response);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-=======
-        }
 
-        /**
-         * Om användaren godkänner samtalet
-         */
-        DataLine.Info speakerInfo = new DataLine.Info(SourceDataLine.class,format);
-        try {
-            speaker = (SourceDataLine) AudioSystem.getLine(speakerInfo);
-            System.out.println(speaker.toString());
-            speaker.open(format);
-        } catch (LineUnavailableException e) {
-            e.printStackTrace();
-        }
-        speaker.start();
 
-        callID = action.getCallID();
-        Action response = new Action("y", getName(), ACCEPT_CALL, action.getCallID());
-        try {
-            oos.writeObject(response);
-            oos.flush();
-            System.out.println("receiveRequest Action written to server");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        aw = new AudioWriter(this);
-        aw.start();
-
-        /**
-         * Om användaren ej godkänner samtalet
-         */
 //        Action response = new Action("n",getName(), REJECT_CALL, action.getCallID());
 //        try {
 //            oos.writeObject(response);
@@ -276,7 +246,6 @@ public class ClientMonitor {
 //            e.printStackTrace();
 //        }
 
->>>>>>> 0f9b4a8a289b907aa519a942dc8b684cdadb056a
     }
 
     @SuppressWarnings("Duplicates")
@@ -293,6 +262,7 @@ public class ClientMonitor {
     /**
      * Closes a call by shutting it down, sending it to the server.
      */
+
     public synchronized void closeCall() {
         Action closeAction = new Action("content", getName(), CLOSE_CALL, callID);
         callID = -1;
@@ -372,6 +342,7 @@ public class ClientMonitor {
 
     /**
      * Collects all the connected clients and removes the current client to show the rest in GUI.
+     *
      * @param action, with connected clients
      */
     public void updateContactList(Action action) {

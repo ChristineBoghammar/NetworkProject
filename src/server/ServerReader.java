@@ -35,13 +35,8 @@ public class ServerReader extends Thread {
                 mon.putMessage(action);
             }
         } catch (IOException e) {
-<<<<<<< HEAD
-
-            e.printStackTrace();
-//            System.err.print("IOException in ServerReader for client: " + "\n");
-=======
+            System.err.print("IOException in ServerReader for client: " + "\n");
             mon.disconnectClient(socket);
->>>>>>> 0f9b4a8a289b907aa519a942dc8b684cdadb056a
         } catch (ClassNotFoundException e1) {
             System.err.print("ClassNotFoundException in ServerReader for client: " + "\n");
         }
