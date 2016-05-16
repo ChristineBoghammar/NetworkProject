@@ -21,8 +21,8 @@ public class ServerMain {
             System.exit(1);
         }
         try {
-            port = Integer.parseInt(args[0]);
-            host = args[1];
+            host = args[0];
+            port = Integer.parseInt(args[1]);
             addr = InetAddress.getByName(host);
             System.out.println(InetAddress.getLocalHost().getHostAddress());
         } catch (UnknownHostException e) {

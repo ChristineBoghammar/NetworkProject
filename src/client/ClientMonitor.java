@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 /**
@@ -18,6 +19,7 @@ public class ClientMonitor {
     private LinkedList<Action> actions;
     private String name;
     private Socket socket;
+    private ArrayList<String> callList;
     private int callID;
     private ObjectOutputStream oos;
     private AudioInputStream ais;
@@ -56,6 +58,7 @@ public class ClientMonitor {
         this.name = name;
         this.socket = s;
         callID = -1;
+        this.callList = new ArrayList<String>();
         try {
             oos = new ObjectOutputStream(s.getOutputStream());
             os = s.getOutputStream();
@@ -66,6 +69,9 @@ public class ClientMonitor {
         this.speaker = null;
     }
 
+    public synchronized ArrayList<String> getCallList(){
+        return callList;
+    }
 
     public synchronized void setCallID(int callID) {
         this.callID = callID;
