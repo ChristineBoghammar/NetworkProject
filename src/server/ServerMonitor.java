@@ -49,8 +49,11 @@ public class ServerMonitor {
         this.activeCalls = new ArrayList<Call>();
     }
 
-
-    public synchronized Action getMessage() {
+    /**
+     * method that returns the next action to perform
+     * @return action
+     */
+    public synchronized Action getAction() {
         while (actions.isEmpty()) {
             try {
                 wait();
@@ -63,11 +66,19 @@ public class ServerMonitor {
 
     }
 
+    /**
+     * Puts an action to be performed in list with actions
+     * @param action
+     */
     public synchronized void putMessage(Action action) {
         actions.add(action);
         notifyAll();
     }
 
+    /**
+     *
+     * @param p
+     */
     public synchronized void addParticipant(Participant p) {
         participants.add(p);
     }
@@ -103,13 +114,17 @@ public class ServerMonitor {
         return null;
     }
 
+    /**
+     * Connects a client to the service. Puts an action to update Conenctec contacts to every other client.
+     * @param action
+     * @param socket
+     */
     public synchronized void connectClient(Action action, Socket socket) {
         try {
             participants.add(new Participant(action.getSender(), socket));
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         ArrayList<String> contacts = new ArrayList<String>();
         for(Participant p : participants){
                 contacts.add(p.getName());
@@ -125,11 +140,14 @@ public class ServerMonitor {
                 e.printStackTrace();
             }
         }
-
         System.out.println("Client connected: " + action.getSender());
         System.out.println(participants.size());
     }
 
+    /**
+     * A clients disconnects from the service: Removed from participants; Puts an action as an updated list with the remaining participants.
+     * @param action
+     */
     public synchronized void disconnectClient(Action action) {
         participants.remove(getParticipant(action.getSender()));
 
@@ -137,7 +155,6 @@ public class ServerMonitor {
         for(Participant p : participants){
             contacts.add(p.getName());
         }
-
         Action updateListAction = new Action(null, action.getSender(), UPDATE_CLIENT_LIST, contacts);
 
         for(Participant p : participants){
@@ -148,9 +165,13 @@ public class ServerMonitor {
                 e.printStackTrace();
             }
         }
-
     }
 
+    /**
+     *
+     * @param callList
+     * @return Arraylist with participants to be called
+     */
     public synchronized ArrayList<Participant> getCallParticipants(ArrayList<String> callList) {
         ArrayList<Participant> participantToCall = new ArrayList<Participant>();
         for (String name : callList) {
@@ -178,21 +199,24 @@ public class ServerMonitor {
 //        }
 //    }
 
-
+    /**
+     * A request is
+     * @param action
+     */
     public synchronized void requestCall(Action action) {
-        System.out.println("Got to requestCall");
         ArrayList<Participant> activeCallList = new ArrayList<Participant>();
         activeCallList.add(getParticipant(action.getSender()));
         ArrayList<Participant> invited = new ArrayList<Participant>();
-        for (String p : action.getList()) {
+        for (String p : action.getToCallList()) {
             invited.add(getParticipant(p));
         }
+        //initiates a new call and adds it to active calls.
         Call c = new Call(invited, uniqueID++);
         activeCalls.add(c);
         c.getAcceptedCallList().add(getParticipant(action.getSender()));
         Action reqAction = new Action(action.getContent(), action.getSender(), RECIEVE_REQUESTED_CALL, c.getID());
         System.out.println(reqAction.getContent() + " " + reqAction.getSender() + " " + reqAction.getCmd() + " " + reqAction.getCallID());
-        for (Participant p : getCallParticipants(action.getList())) {
+        for (Participant p : getCallParticipants(action.getToCallList())) {
             try {
                 p.getObjectOutputStream().writeObject(reqAction);
                 p.getObjectOutputStream().flush();
@@ -207,7 +231,6 @@ public class ServerMonitor {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     @SuppressWarnings("Duplicates")
@@ -292,17 +315,7 @@ public class ServerMonitor {
                 }
             }
         }
-
     }
-
-    public synchronized void closeConnection(Action action) {
-        for (Participant p : participants) {
-            if (p.getName().equals(action.getSender())) {
-                participants.remove(p);
-            }
-        }
-    }
-
 
     @SuppressWarnings("Duplicates")
     public synchronized void sendAudio(Action action) {
@@ -312,7 +325,6 @@ public class ServerMonitor {
                 try {
                     p.getObjectOutputStream().writeObject(sendAction);
                     p.getObjectOutputStream().flush();
-//                p.getSocket().getOutputStream().write(action.getContent().getBytes());
                 } catch (IOException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();

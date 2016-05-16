@@ -33,7 +33,7 @@ public class ServerWriter extends Thread  {
 
     public void run(){
         while (true) {
-            Action action = mon.getMessage();
+            Action action = mon.getAction();
             switch (action.getCmd()) {
                 case CONNECT:
                     mon.connectClient(action, socket);
