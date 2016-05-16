@@ -122,9 +122,7 @@ public class ClientMonitor {
 
     @SuppressWarnings("Duplicates")
     public synchronized void requestCall(Action action) {
-        /**
-         * Någon försöker starta ett samtal med denna client. Lösning är att godkänna eller neka. Görs via GUI.
-         */
+
         DataLine.Info speakerInfo = new DataLine.Info(SourceDataLine.class,format);
         try {
             speaker = (SourceDataLine) AudioSystem.getLine(speakerInfo);

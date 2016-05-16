@@ -12,10 +12,9 @@ import javafx.scene.control.SelectionMode;
 import javafx.scene.layout.AnchorPane;
 import protocol.Action;
 
+import java.lang.reflect.Array;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 
 /**
  * Created by johan on 2016-05-16.
@@ -68,7 +67,6 @@ public class ClientGUIController implements Initializable {
         callButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                ArrayList<String> callList = mon.getCallList();
                 System.out.println("Tryckte på callButton");
                 if (callList.size() > 0) {
                     mon.putAction(new Action(null, mon.getName(), INITIATE_CALL, callList));
@@ -81,8 +79,15 @@ public class ClientGUIController implements Initializable {
         connectedContacts.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                callList.addAll(connectedContacts.getSelectionModel().getSelectedItems());
-
+                ArrayList<String> temp = new ArrayList<String>();
+                for(Object o :connectedContacts.getSelectionModel().getSelectedItems()){
+                    temp.add((String) o);
+                }
+                callList = temp;
+                System.out.println("To Call:");
+                for(String s : callList){
+                    System.out.println(s);
+                }
             }
         });
 
