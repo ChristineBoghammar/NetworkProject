@@ -143,7 +143,7 @@ public class ClientMonitor {
             e.printStackTrace();
         }
 
-        System.out.println("cmd: " + action.getCmd() + " content: " + action.getContent() + " sender: " + action.getSender() + " callId: " + action.getList());
+        System.out.println("cmd: " + action.getCmd() + " content: " + action.getContent() + " sender: " + action.getSender() + " callId: " + action.getToCallList());
     }
 
     public synchronized void acceptCall(Action action) {
@@ -333,7 +333,7 @@ public class ClientMonitor {
     }
 
     public void updateContactList(Action action) {
-        ArrayList<String> updatedList = action.getList();
+        ArrayList<String> updatedList = action.getToCallList();
         ArrayList<String> toRemove = new ArrayList<String>();
         for(String contact : updatedList){
             if(contact.equals(this.getName())){
