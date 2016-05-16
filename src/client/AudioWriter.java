@@ -31,7 +31,6 @@ public class AudioWriter extends Thread {
 
     public AudioWriter(ClientMonitor mon) {
         this.mon = mon;
-
         this.format = getAudioFormat();
     }
 
