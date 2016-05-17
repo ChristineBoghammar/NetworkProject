@@ -12,10 +12,10 @@
 
 [] Implement a GUI so that the following is possible:
 	[x] Show a list of active clients
-	[] Have the ability to call several participants
-		[] Have the ability to accept a call.		
-		[] Have the ability to reject a call.		
-		[] Have the ability to end a call.	
+	[x] Have the ability to call several participants
+		[x] Have the ability to accept a call.
+		[x] Have the ability to reject a call.
+		[x] Have the ability to end a call.
 	[] Show voicemails to the client
 
 ** Problem **
