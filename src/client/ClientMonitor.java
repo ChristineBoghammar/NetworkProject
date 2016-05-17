@@ -180,8 +180,10 @@ public class ClientMonitor {
     synchronized void rejectCall(Action action) {
         if (action.getContent().equals("n")) {
             System.out.println(action.getSender() + " Has rejected the call");
-        } else {
+        } else if (action.getContent().equals("b")) {
             System.out.println(action.getSender() + " is busy in another call");
+        } else {
+            System.out.println("Unknown call rejection from " + action.getSender());
         }
     }
 
@@ -234,18 +236,8 @@ public class ClientMonitor {
                     e.printStackTrace();
                 }
             };
-            FutureTask<Void> task = new FutureTask<>(runnable, null);
-            Platform.runLater(task);
-            try {
-                task.get();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            }
 
-
-            System.out.println(accept);
+            runGUIUpdate(runnable);
             if (accept) { // Om användaren godkänner eller ej
                 System.out.println("Accepterade samtalet");
                 DataLine.Info speakerInfo = new DataLine.Info(SourceDataLine.class, format);
@@ -378,6 +370,18 @@ public class ClientMonitor {
         }
     }
 
+    public void runGUIUpdate(Runnable runnable){
+        FutureTask<Void> task = new FutureTask<>(runnable, null);
+        Platform.runLater(task);
+        try {
+            task.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * Collects all the connected clients and removes the current client to show the rest in GUI.
      *
@@ -395,7 +399,10 @@ public class ClientMonitor {
             }
         }
         updatedContactList.removeAll(toRemove);
-        cgc.updateContactList(updatedContactList);
+        Runnable runnable = () -> {
+            cgc.updateContactList(updatedContactList);
+        };
+        runGUIUpdate(runnable);
     }
 
     public synchronized void updateCallList(Action action) {
@@ -408,7 +415,10 @@ public class ClientMonitor {
             }
         }
         updatedCallList.removeAll(toRemove);
-        agc.updateConnectedParticipants(updatedCallList);
+        Runnable runnable = () -> {
+            agc.updateConnectedParticipants(updatedCallList);
+        };
+        runGUIUpdate(runnable);
     }
 }
 

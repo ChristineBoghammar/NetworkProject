@@ -83,11 +83,12 @@ public class ActiveCallGUIController implements Initializable {
     }
 
     public void updateConnectedParticipants(ArrayList<String> updatedList){
-        for(Object curr : connectedParticipants.getItems()){
-            if(!updatedList.contains(curr.toString())){
-                connectedParticipants.getItems().remove(curr);
-            }
-        }
+//        for(Object curr : connectedParticipants.getItems()){
+//            if(!updatedList.contains(curr.toString())){
+//                connectedParticipants.getItems().remove(curr);
+//            }
+//        }
+        connectedParticipants.getItems().clear();
         connectedParticipants.getItems().add("Connected participants:");
         System.out.println(updatedList.toString());
         for(String s : updatedList){

@@ -74,6 +74,9 @@ public class ClientGUI extends Application {
             cgc.setGUI(this);
             cgc.setMonitor(mon);
 
+            agc.setGUI(this);
+            agc.setMonitor(mon);
+
             Scene scene = new Scene(start, 600, 400);
             setScene(scene);
 
@@ -97,10 +100,12 @@ public class ClientGUI extends Application {
     }
 
     public void activateCall() throws IOException {
-        Scene scene = new Scene(active, 600, 400);
-        setScene(scene);
-
-
+        if(active.getScene() == null){
+            Scene scene = new Scene(active, 600, 400);
+            setScene(scene);
+        } else {
+            setScene(active.getScene());
+        }
     }
 
     public boolean incomingCall(String sender) throws IOException {
@@ -130,12 +135,12 @@ public class ClientGUI extends Application {
     }
 
     public void startScreen() throws IOException {
-
-
-        Scene scene = new Scene(start, 600, 400);
-        setScene(scene);
-
-
+        if(start.getScene() == null){
+            Scene scene = new Scene(start, 600, 400);
+            setScene(scene);
+        } else {
+            setScene(start.getScene());
+        }
     }
 
     public void setScene(Scene scene){
