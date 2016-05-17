@@ -1,6 +1,7 @@
 package client;
 
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -11,7 +12,9 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import protocol.Action;
+
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -24,6 +27,10 @@ public class ClientGUI extends Application {
     public static String host = "192.168.1.113";
     public static int port = 30000;
     private Stage primaryStage;
+    private FXMLLoader startLoader;
+    private FXMLLoader activeLoader;
+    private Parent start;
+    private Parent active;
 
     public static void main(String args[]) {
         launch(args);
@@ -32,7 +39,7 @@ public class ClientGUI extends Application {
     public void start(Stage primaryStage) throws IOException {
         this.primaryStage = primaryStage;
         final List<String> params = getParameters().getRaw();
-        if(params.size() != 2){
+        if (params.size() != 2) {
             System.out.println("Two arguments have to be applied, restart the system");
             System.exit(1);
         }
@@ -47,12 +54,16 @@ public class ClientGUI extends Application {
 
             s = new Socket(host, port);
 
-            FXMLLoader loader1 = new FXMLLoader(getClass().getResource("../gui/startGui.fxml"));
-            Parent start = loader1.load();
-            ClientGUIController cgc = loader1.getController();
+            startLoader = new FXMLLoader(getClass().getResource("../gui/startGui.fxml"));
+            start = startLoader.load();
+            ClientGUIController cgc = startLoader.getController();
+
+            activeLoader = new FXMLLoader(getClass().getResource("../gui/activeCall.fxml"));
+            active = activeLoader.load();
+            ActiveCallGUIController agc = activeLoader.getController();
 
 
-            ClientMonitor mon = new ClientMonitor(name, s, cgc, this);
+            ClientMonitor mon = new ClientMonitor(name, s, cgc, agc, this);
             ClientReader cr = new ClientReader(mon, s);
             ClientWriter cw = new ClientWriter(mon, s);
             cr.start();
@@ -64,11 +75,7 @@ public class ClientGUI extends Application {
             cgc.setMonitor(mon);
 
             Scene scene = new Scene(start, 600, 400);
-
-
-            primaryStage.setTitle("Skajp");
-            primaryStage.setScene(scene);
-            primaryStage.show();
+            setScene(scene);
 
 //            while (true) {
 //                System.out.print("Write a Command: " + "\n");
@@ -90,15 +97,8 @@ public class ClientGUI extends Application {
     }
 
     public void activateCall() throws IOException {
-        FXMLLoader loader3 = new FXMLLoader(getClass().getResource("../gui/activeCall.fxml"));
-        Parent activeCall = loader3.load();
-        ActiveCallGUIController acg = loader3.getController();
-
-        Scene scene = new Scene(activeCall, 600, 400);
-
-        primaryStage.setTitle("Skajp");
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        Scene scene = new Scene(active, 600, 400);
+        setScene(scene);
 
 
     }
@@ -116,7 +116,7 @@ public class ClientGUI extends Application {
         alert.getButtonTypes().setAll(buttonTypeOne, buttonTypeTwo);
 
         Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == buttonTypeOne){
+        if (result.get() == buttonTypeOne) {
             System.out.println("Accepted call");
             activateCall();
             return true;
@@ -129,7 +129,26 @@ public class ClientGUI extends Application {
         }
     }
 
-    public void startScreen() {
+    public void startScreen() throws IOException {
+
+
+        Scene scene = new Scene(start, 600, 400);
+        setScene(scene);
+
+
+    }
+
+    public void setScene(Scene scene){
+        primaryStage.setTitle("Skajp");
+        primaryStage.setScene(scene);
+        primaryStage.show();
+
+        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            public void handle(WindowEvent we) {
+                System.exit(1);
+            }
+        });
+
 
     }
 }

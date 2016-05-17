@@ -30,7 +30,7 @@ public class ServerMonitor {
     private final int SEND_AUDIO_DATA = 11;
     private final int RECIEVE_AUDIO_DATA = 12;
     private final int UPDATE_CLIENT_LIST = 13;
-
+    private final int UPDATE_CALL_LIST = 14;
 
     /**
      * Possible cmd's are:
@@ -237,7 +237,6 @@ public class ServerMonitor {
     @SuppressWarnings("Duplicates")
     public synchronized void acceptCall(Action action) {
         Call actualCall = getCall(action.getCallID());
-
         ArrayList<Participant> toRemove = new ArrayList<Participant>();
         for (Participant p : actualCall.getInvitedParticipants()) {
             if (p.getName().equals(action.getSender())) {
@@ -249,6 +248,8 @@ public class ServerMonitor {
                             try {
                                 System.out.println(action.getSender() + " " + action.getCmd());
                                 acceptP.getObjectOutputStream().writeObject(action);
+
+
                                 acceptP.getObjectOutputStream().flush();
                             } catch (IOException e) {
                                 e.printStackTrace();
@@ -259,6 +260,24 @@ public class ServerMonitor {
             }
         }
         actualCall.getInvitedParticipants().removeAll(toRemove);
+
+        for(Participant p : actualCall.getAcceptedCallList()){
+            Action updateCallListAction = new Action("null", p.getName(), UPDATE_CALL_LIST, getCallList(actualCall));
+            try {
+                p.getObjectOutputStream().writeObject(updateCallListAction);
+                p.getObjectOutputStream().flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private ArrayList<String> getCallList(Call actualCall){
+        ArrayList<String> toReturn = new ArrayList<>();
+        for(Participant p : actualCall.getAcceptedCallList()){
+                toReturn.add(p.getName());
+        }
+        return toReturn;
     }
 
     @SuppressWarnings("Duplicates")
@@ -288,41 +307,54 @@ public class ServerMonitor {
 
     @SuppressWarnings("Duplicates")
     public synchronized void closeCall(Action action) {
-        Call call = getCall(action.getCallID());
+        Call actualCall = getCall(action.getCallID());
         boolean removedParticipant = false;
-        if (call.getInvitedParticipants().size() > 0) {
-            if (!call.getInvitedParticipants().contains(getParticipant(action.getSender()))) {
+        if (actualCall.getInvitedParticipants().size() > 0) {
+            if (!actualCall.getInvitedParticipants().contains(getParticipant(action.getSender()))) {
                 ArrayList<Participant> toRemove = new ArrayList<Participant>();
-                for (Participant p : call.getAcceptedCallList()) {
+                for (Participant p : actualCall.getAcceptedCallList()) {
                     if (p.getName().equals(action.getSender())) {
                         toRemove.add(p);
                         removedParticipant = true;
                     }
 
                 }
-                call.getAcceptedCallList().removeAll(toRemove);
+                actualCall.getAcceptedCallList().removeAll(toRemove);
 
             }
         }
         if (removedParticipant) {
             Action closeAction = new Action(action.getContent(), action.getSender(), RECIEVE_CLOSE_CALL, action.getCallID());
-            for (Participant acceptP : call.getAcceptedCallList()) {
+            for (Participant acceptP : actualCall.getAcceptedCallList()) {
                 try {
                     System.out.println(action.getSender() + " " + action.getCmd());
                     acceptP.getObjectOutputStream().writeObject(closeAction);
+
+                    Action updateCallListAction = new Action("null", acceptP.getName(), UPDATE_CALL_LIST, getCallList(actualCall));
+                    acceptP.getObjectOutputStream().writeObject(updateCallListAction);
                     acceptP.getObjectOutputStream().flush();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         }
+//        for(Participant p : actualCall.getAcceptedCallList()){
+//            Action updateCallListAction = new Action("null", p.getName(), UPDATE_CALL_LIST, getCallList(actualCall));
+//            try {
+//                p.getObjectOutputStream().writeObject(updateCallListAction);
+//                p.getObjectOutputStream().flush();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+
     }
 
     @SuppressWarnings("Duplicates")
     public synchronized void sendAudio(Action action) {
         Action sendAction = new Action(action.getAudioData(), action.getSender(), RECIEVE_AUDIO_DATA, action.getCallID());
         for (Participant p : getCall(action.getCallID()).getAcceptedCallList()) {
-            if (!p.getName().equals(action.getSender())) {
+            if (!p.getName().equals(action.getSender()) && participants.contains(p)) {
                 try {
                     p.getObjectOutputStream().writeObject(sendAction);
                     p.getObjectOutputStream().flush();
@@ -341,16 +373,18 @@ public class ServerMonitor {
     public synchronized void disconnectClient(Socket socket) {
         String disconnectedClient = "";
         ArrayList<String> contacts = new ArrayList<String>();
+        ArrayList<Participant> toRemove = new ArrayList<>();
         for (Participant p : participants) {
             if (p.getSocket().equals(socket)) {
-                participants.remove(p);
+                toRemove.add(p);
                 disconnectedClient = p.getName();
             } else {
                 contacts.add(p.getName());
             }
         }
-        Action updateListAction = new Action(null, disconnectedClient, UPDATE_CLIENT_LIST, contacts);
+        participants.removeAll(toRemove);
 
+        Action updateListAction = new Action(null, disconnectedClient, UPDATE_CLIENT_LIST, contacts);
         for (Participant p : participants) {
             try {
                 p.getObjectOutputStream().writeObject(updateListAction);

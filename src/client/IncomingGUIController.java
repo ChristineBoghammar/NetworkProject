@@ -75,7 +75,7 @@ public class IncomingGUIController implements Initializable {
         rejectButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                gui.startScreen();
+//                gui.startScreen();
             }
         });
 

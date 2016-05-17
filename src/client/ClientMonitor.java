@@ -32,6 +32,7 @@ public class ClientMonitor {
     private AudioWriter aw = null;
     private List<String> connectedClients;
     private ClientGUIController cgc;
+    private ActiveCallGUIController agc;
     private ClientGUI gui;
 
     private final int CONNECT = 0;
@@ -61,11 +62,12 @@ public class ClientMonitor {
      * 6 - Receive requested Call
      */
 
-    public ClientMonitor(String name, Socket s, ClientGUIController cgc, ClientGUI gui) {
+    public ClientMonitor(String name, Socket s, ClientGUIController cgc, ActiveCallGUIController agc, ClientGUI gui) {
         this.actions = new LinkedList<Action>();
         this.name = name;
         this.socket = s;
         this.cgc = cgc;
+        this.agc = agc;
         this.gui = gui;
         callID = -1;
         this.callList = new ArrayList<String>();
@@ -381,19 +383,32 @@ public class ClientMonitor {
      *
      * @param action, with connected clients
      */
-    public void updateContactList(Action action) {
+    public synchronized void updateContactList(Action action) {
         //gets the list of conected clients
-        ArrayList<String> updatedList = action.getList();
+        ArrayList<String> updatedContactList = action.getList();
 
         //(List) with one element being the curent client
         ArrayList<String> toRemove = new ArrayList<String>();
-        for (String contact : updatedList) {
+        for (String contact : updatedContactList) {
             if (contact.equals(this.getName())) {
                 toRemove.add(contact);
             }
         }
-        updatedList.removeAll(toRemove);
-        cgc.updateContactList(updatedList);
+        updatedContactList.removeAll(toRemove);
+        cgc.updateContactList(updatedContactList);
+    }
+
+    public synchronized void updateCallList(Action action) {
+        ArrayList<String> updatedCallList = action.getList();
+
+        ArrayList<String> toRemove = new ArrayList<String>();
+        for (String contact : updatedCallList) {
+            if (contact.equals(this.getName())) {
+                toRemove.add(contact);
+            }
+        }
+        updatedCallList.removeAll(toRemove);
+        agc.updateConnectedParticipants(updatedCallList);
     }
 }
 

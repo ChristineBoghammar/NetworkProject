@@ -1,7 +1,12 @@
 package client;
 
+import javafx.beans.property.ListProperty;
+import javafx.beans.property.SimpleListProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -10,6 +15,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import protocol.Action;
 
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.net.URL;
 import java.util.*;
@@ -39,6 +45,10 @@ public class ActiveCallGUIController implements Initializable {
     @FXML
     private Button disconnectButton;
 
+    @FXML
+    private ListView connectedParticipants;
+
+
     public void setMonitor(ClientMonitor mon) {
         this.mon = mon;
     }
@@ -50,14 +60,20 @@ public class ActiveCallGUIController implements Initializable {
 
     @Override
     public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
-        assert disconnectButton != null : "fx:id=\"disconnectButton\" was not injected: check your FXML file 'startGui.fxml'.";
+        assert disconnectButton != null : "fx:id=\"disconnectButton\" was not injected: check your FXML file 'activateGui.fxml'.";
+        assert connectedParticipants != null : "fx:id=\"connectedParticipants\" was not injected: check your FXML file 'activateGui.fxml'.";
 
         System.out.println("Initialized 'active' controller");
+//        connectedParticipants.getItems().add("Connected participants:");
 
         disconnectButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                gui.startScreen();
+                try {
+                    gui.startScreen();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 mon.putAction(new Action("null", mon.getName(), CLOSE_CALL, mon.getCallID()));
             }
         });
@@ -65,4 +81,19 @@ public class ActiveCallGUIController implements Initializable {
 
 
     }
+
+    public void updateConnectedParticipants(ArrayList<String> updatedList){
+        for(Object curr : connectedParticipants.getItems()){
+            if(!updatedList.contains(curr.toString())){
+                connectedParticipants.getItems().remove(curr);
+            }
+        }
+        connectedParticipants.getItems().add("Connected participants:");
+        System.out.println(updatedList.toString());
+        for(String s : updatedList){
+            connectedParticipants.getItems().add(s);
+        }
+        System.out.println("Att skriva på listview: " + connectedParticipants.getItems().toString());
+    }
+
 }

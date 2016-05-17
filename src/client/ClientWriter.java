@@ -31,6 +31,8 @@ public class ClientWriter extends Thread {
     private final int SEND_AUDIO_DATA = 11;
     private final int RECIEVE_AUDIO_DATA = 12;
     private final int UPDATE_CLIENT_LIST = 13;
+    private final int UPDATE_CALL_LIST = 14;
+
 
 
 
@@ -62,11 +64,7 @@ public class ClientWriter extends Thread {
                     break;
 
                 case RECIEVE_REQUESTED_CALL:
-                    try {
-                        mon.receiveRequest(action);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    mon.receiveRequest(action);
                     break;
 
                 case REJECT_CALL:
@@ -95,6 +93,9 @@ public class ClientWriter extends Thread {
 
                 case UPDATE_CLIENT_LIST:
                     mon.updateContactList(action);
+                    break;
+                case UPDATE_CALL_LIST:
+                    mon.updateCallList(action);
                     break;
             }
         }
