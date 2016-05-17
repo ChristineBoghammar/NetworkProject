@@ -38,7 +38,7 @@ public class ServerMain {
                     new ServerWriter(mon, connection).start();
 
                 } catch (IOException ex) {
-
+                    ex.printStackTrace();
                 }
 
             }

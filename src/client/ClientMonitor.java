@@ -150,11 +150,32 @@ public class ClientMonitor {
         System.out.println("cmd: " + action.getCmd() + " content: " + action.getContent() + " sender: " + action.getSender() + " callId: " + action.getList());
     }
 
-    public synchronized void acceptCall(Action action) {
+    synchronized void acceptCall(Action action) {
+        if (aw == null) {
+            aw = new AudioWriter(this);
+            aw.start();
+        }
+
+        Runnable runnable = () -> {
+            try {
+                gui.activateCall();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        };
+        FutureTask<Void> task = new FutureTask<>(runnable, null);
+        Platform.runLater(task);
+        try {
+            task.get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+
+
         System.out.println(action.getSender() + " Has accepted the call");
     }
 
-    public synchronized void rejectCall(Action action) {
+    synchronized void rejectCall(Action action) {
         if (action.getContent().equals("n")) {
             System.out.println(action.getSender() + " Has rejected the call");
         } else {
@@ -192,9 +213,6 @@ public class ClientMonitor {
         }
     }
 
-    public synchronized  void setAcceptCall(boolean bool){
-        this.accept = bool;
-    }
 
     /**
      * Handles a request whether the client is busy, accept or rejects the call.
@@ -204,7 +222,7 @@ public class ClientMonitor {
     boolean accept = false;
 
 
-    public synchronized void receiveRequest(Action action) throws IOException {
+    public synchronized void receiveRequest(Action action) {
         accept = false;
         if (callID == -1) {
             Runnable runnable = () -> {
@@ -315,10 +333,6 @@ public class ClientMonitor {
      */
     public synchronized void receiveCallID(Action action) {
         callID = action.getCallID();
-        if (aw == null) {
-            aw = new AudioWriter(this);
-            aw.start();
-        }
         System.out.println("CallID is :" + action.getCallID());
     }
 
@@ -343,7 +357,7 @@ public class ClientMonitor {
         byte[] data = action.getAudioData();
         ByteArrayInputStream bais = new ByteArrayInputStream(data);
         AudioInputStream ais = new AudioInputStream(bais, format, data.length);
-        int bytesRead = 0;
+        int bytesRead;
         try {
             if ((bytesRead = ais.read(data)) != -1) {
                 System.out.println("Writing to audio output.");

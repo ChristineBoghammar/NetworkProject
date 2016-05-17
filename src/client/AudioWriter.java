@@ -47,6 +47,7 @@ public class AudioWriter extends Thread {
         }
         System.out.println("Mic open.");
         byte tmpBuff[];
+        assert mic != null;
         mic.start();
         long time;
         while (mon.getCallID() != -1 && (mic.read((tmpBuff = new byte[mic.getBufferSize() / 5]), 0, tmpBuff.length)) > 0) {
@@ -59,7 +60,6 @@ public class AudioWriter extends Thread {
             }
             System.out.println(System.currentTimeMillis() - time);
         }
-        return;
     }
 
     private AudioFormat getAudioFormat() {

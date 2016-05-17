@@ -49,7 +49,7 @@ public class ClientGUI extends Application {
 
             FXMLLoader loader1 = new FXMLLoader(getClass().getResource("../gui/startGui.fxml"));
             Parent start = loader1.load();
-            ClientGUIController cgc = (ClientGUIController) loader1.getController();
+            ClientGUIController cgc = loader1.getController();
 
 
             ClientMonitor mon = new ClientMonitor(name, s, cgc, this);
@@ -92,7 +92,7 @@ public class ClientGUI extends Application {
     public void activateCall() throws IOException {
         FXMLLoader loader3 = new FXMLLoader(getClass().getResource("../gui/activeCall.fxml"));
         Parent activeCall = loader3.load();
-        ActiveCallGUIController acg = (ActiveCallGUIController) loader3.getController();
+        ActiveCallGUIController acg = loader3.getController();
 
         Scene scene = new Scene(activeCall, 600, 400);
 

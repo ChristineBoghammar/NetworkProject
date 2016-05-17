@@ -207,8 +207,6 @@ public class ServerMonitor {
      * @param action
      */
     public synchronized void requestCall(Action action) {
-        ArrayList<Participant> activeCallList = new ArrayList<Participant>();
-        activeCallList.add(getParticipant(action.getSender()));
         ArrayList<Participant> invited = new ArrayList<Participant>();
         for (String p : action.getList()) {
             invited.add(getParticipant(p));
@@ -240,7 +238,7 @@ public class ServerMonitor {
     public synchronized void acceptCall(Action action) {
         Call actualCall = getCall(action.getCallID());
 
-        ArrayList toRemove = new ArrayList();
+        ArrayList<Participant> toRemove = new ArrayList<Participant>();
         for (Participant p : actualCall.getInvitedParticipants()) {
             if (p.getName().equals(action.getSender())) {
                 actualCall.getAcceptedCallList().add(p);
@@ -266,7 +264,7 @@ public class ServerMonitor {
     @SuppressWarnings("Duplicates")
     public synchronized void rejectCall(Action action) {
         Call actualCall = getCall(action.getCallID());
-        ArrayList toRemove = new ArrayList();
+        ArrayList<Participant> toRemove = new ArrayList<Participant>();
         for (Participant p : actualCall.getInvitedParticipants()) {
             if (p.getName().equals(action.getSender())) {
                 toRemove.add(p);
@@ -294,7 +292,7 @@ public class ServerMonitor {
         boolean removedParticipant = false;
         if (call.getInvitedParticipants().size() > 0) {
             if (!call.getInvitedParticipants().contains(getParticipant(action.getSender()))) {
-                ArrayList toRemove = new ArrayList();
+                ArrayList<Participant> toRemove = new ArrayList<Participant>();
                 for (Participant p : call.getAcceptedCallList()) {
                     if (p.getName().equals(action.getSender())) {
                         toRemove.add(p);
