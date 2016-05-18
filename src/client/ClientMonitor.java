@@ -34,6 +34,7 @@ public class ClientMonitor {
     private ClientGUIController cgc;
     private ActiveCallGUIController agc;
     private ClientGUI gui;
+    private ArrayList<String> senders;
 
     private final int CONNECT = 0;
     private final int DISCONNECT = 1;
@@ -71,6 +72,7 @@ public class ClientMonitor {
         this.gui = gui;
         callID = -1;
         this.callList = new ArrayList<String>();
+        this.senders = new ArrayList<String>();
         try {
             oos = new ObjectOutputStream(s.getOutputStream());
             os = s.getOutputStream();
@@ -347,29 +349,48 @@ public class ClientMonitor {
     /**
      * @param action
      */
+//    public synchronized void receiveAudioData(Action action) {
+//
+//        byte[] data = action.getAudioData();
+//        ByteArrayInputStream bais = new ByteArrayInputStream(data);
+//        AudioInputStream ais = new AudioInputStream(bais, format, data.length);
+//        int bytesRead;
+//        try {
+//            if ((bytesRead = ais.read(data)) != -1) {
+//                System.out.println("Writing to audio output.");
+//                speaker.write(data, 0, bytesRead);
+//
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//        try {
+//            ais.close();
+//            bais.close();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
+
     public synchronized void receiveAudioData(Action action) {
 
-        byte[] data = action.getAudioData();
-        ByteArrayInputStream bais = new ByteArrayInputStream(data);
-        AudioInputStream ais = new AudioInputStream(bais, format, data.length);
-        int bytesRead;
-        try {
-            if ((bytesRead = ais.read(data)) != -1) {
-                System.out.println("Writing to audio output.");
-                speaker.write(data, 0, bytesRead);
+        String sender = action.getSender();
+//        for(String s : senders) {
+//            if (!sender.equals(s)) {
+//                AudioReader ar = new AudioReader(sender, action, format, speaker);
+//                ar.start();
+//                senders.add(sender);
+//
+//            }
+//        }
+        AudioReader ar = new AudioReader(sender, action, format, speaker);
+        ar.start();
 
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
-        try {
-            ais.close();
-            bais.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
     }
+
 
     public void runGUIUpdate(Runnable runnable){
         FutureTask<Void> task = new FutureTask<>(runnable, null);

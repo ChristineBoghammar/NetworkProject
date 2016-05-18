@@ -365,6 +365,7 @@ public class ServerMonitor {
             }
         }
     }
+    
 
     /**
      * Handles the disconnected client and updated the remaining clients with a list of connected clients.

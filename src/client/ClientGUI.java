@@ -24,7 +24,7 @@ import java.util.Scanner;
 
 
 public class ClientGUI extends Application {
-    public static String host = "192.168.1.113";
+    public static String host = "192.168.1.203";
     public static int port = 30000;
     private Stage primaryStage;
     private FXMLLoader startLoader;
