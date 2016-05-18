@@ -114,6 +114,7 @@ public class ClientMonitor {
                 e.printStackTrace();
             }
         }
+        System.out.println("Monitor storlek: " + actions.size());
         return actions.poll();
 
     }
