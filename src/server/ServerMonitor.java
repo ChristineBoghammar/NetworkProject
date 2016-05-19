@@ -388,7 +388,7 @@ public class ServerMonitor {
 
         audioToSend.get(action.getCallID()).add(action);
 
-        if((System.currentTimeMillis() - timeSinceSent) > 50){
+        if((System.currentTimeMillis() - timeSinceSent) > 500){
             for(Participant p : getCall(action.getCallID()).getAcceptedCallList()){
                 if(participants.contains(p)){
                     System.out.println("KOM HIT 3");

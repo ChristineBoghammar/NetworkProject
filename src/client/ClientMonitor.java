@@ -36,7 +36,7 @@ public class ClientMonitor {
     private ActiveCallGUIController agc;
     private ClientGUI gui;
     private ArrayList<String> senders;
-    private ArrayList<AudioMonitor> audioReceivers;
+//    private ArrayList<AudioMonitor> audioReceivers;
 
     private final int CONNECT = 0;
     private final int DISCONNECT = 1;
@@ -75,7 +75,7 @@ public class ClientMonitor {
         this.callID = -1;
         this.callList = new ArrayList<String>();
         this.senders = new ArrayList<String>();
-        this.audioReceivers = new ArrayList<AudioMonitor>();
+//        this.audioReceivers = new ArrayList<AudioMonitor>();
         try {
             oos = new ObjectOutputStream(s.getOutputStream());
             os = s.getOutputStream();
@@ -159,15 +159,6 @@ public class ClientMonitor {
     }
 
     synchronized void acceptCall(Action action) {
-//        boolean audioMonExists = false;
-//        for(AudioMonitor am : audioReceivers){
-//            if(am.getAudioSender().equals(action.getSender())){
-//                audioMonExists = true;
-//            }
-//        }
-//        if(!audioMonExists){
-//            audioReceivers.add(new AudioMonitor(action.getSender(), speaker));
-//        }
 
         if (aw == null) {
             aw = new AudioWriter(this);
@@ -265,16 +256,16 @@ public class ClientMonitor {
                     e.printStackTrace();
                 }
                 speaker.start();
-
-                boolean audioMonExists = false;
-                for(AudioMonitor am : audioReceivers){
-                    if(am.getAudioSender().equals(action.getSender())){
-                        audioMonExists = true;
-                    }
-                }
-                if(!audioMonExists){
-                    audioReceivers.add(new AudioMonitor(action.getSender(), speaker));
-                }
+//                audioMon = new AudioMonitor(speaker);
+//                boolean audioMonExists = false;
+//                for(AudioMonitor am : audioReceivers){
+//                    if(am.getAudioSender().equals(action.getSender())){
+//                        audioMonExists = true;
+//                    }
+//                }
+//                if(!audioMonExists){
+//                    audioReceivers.add(new AudioMonitor(action.getSender(), speaker));
+//                }
 
                 callID = action.getCallID();
                 Action response = new Action("y", getName(), ACCEPT_CALL, action.getCallID());
@@ -324,10 +315,10 @@ public class ClientMonitor {
      */
 
     public synchronized void closeCall() {
-        for(AudioMonitor am : audioReceivers){
-            am.setReceiving(false);
-        }
-        audioReceivers.clear();
+//        for(AudioMonitor am : audioReceivers){
+//            am.setReceiving(false);
+//        }
+//        audioReceivers.clear();
         Action closeAction = new Action("content", getName(), CLOSE_CALL, callID);
         callID = -1;
         try {
@@ -347,15 +338,15 @@ public class ClientMonitor {
      * @param action
      */
     public synchronized void receiveCloseCall(Action action) {
-        ArrayList<AudioMonitor> toRemove = new ArrayList<AudioMonitor>();
-        for(AudioMonitor am : audioReceivers){
-            if(am.getAudioSender().equals(action.getSender())){
-                am.setReceiving(false);
-                toRemove.add(am);
+//        ArrayList<AudioMonitor> toRemove = new ArrayList<AudioMonitor>();
+//        for(AudioMonitor am : audioReceivers){
+//            if(audioMon.getAudioSender().equals(action.getSender())){
+//                audioMon.setReceiving(false);
+//                toRemove.add(am);
 
-            }
-        }
-        audioReceivers.removeAll(toRemove);
+//            }
+//        }
+//        audioReceivers.removeAll(toRemove);
         System.out.println(action.getSender() + " Has left the call");
     }
 
@@ -479,8 +470,8 @@ public class ClientMonitor {
         runGUIUpdate(runnable);
     }
 
-    public ArrayList<AudioMonitor> getAudioReceivers() {
-        return audioReceivers;
-    }
+//    public AudioMonitor getAudioMon(){
+//        return audioMon;
+//    }
 }
 

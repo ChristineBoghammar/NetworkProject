@@ -15,13 +15,13 @@ import java.util.LinkedList;
 public class AudioMonitor {
     private LinkedList<Action> actions;
     private AudioFormat format;
-    private String audioSender;
+//    private String audioSender;
     private SourceDataLine speaker;
     private boolean receiving;
 
-    public AudioMonitor(String audioSender, SourceDataLine speaker){
+    public AudioMonitor(SourceDataLine speaker){
         this.format = getAudioFormat();
-        this.audioSender = audioSender;
+//        this.audioSender = audioSender;
         this.speaker = speaker;
         this.actions = new LinkedList<Action>();
         receiving = true;
@@ -91,7 +91,6 @@ public class AudioMonitor {
         int channels = 1;
         boolean signed = true;
         boolean bigEndian = false;
-
         return new AudioFormat(sampleRate, sampleSizeBits, channels, signed, bigEndian);
     }
 
@@ -99,9 +98,9 @@ public class AudioMonitor {
         return receiving;
     }
 
-    public String getAudioSender(){
-        return audioSender;
-    }
+//    public String getAudioSender(){
+//        return audioSender;
+//    }
 
     public void setReceiving(boolean bool) {
         receiving = bool;
