@@ -89,11 +89,11 @@ public class ClientWriter extends Thread {
                     break;
 
                 case RECIEVE_AUDIO_DATA:
-                    ArrayList<AudioMonitor> receivers = mon.getAudioReceivers();
-                    for(AudioMonitor audioMon : receivers){
-                        audioMon.putAction(action);
-                    }
-//                    mon.receiveAudioData(action);
+//                    ArrayList<AudioMonitor> receivers = mon.getAudioReceivers();
+//                    for(AudioMonitor audioMon : receivers){
+//                        audioMon.putAction(action);
+//                    }
+                    mon.receiveAudioData(action);
                     break;
 
                 case UPDATE_CLIENT_LIST:

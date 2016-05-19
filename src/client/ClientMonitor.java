@@ -159,15 +159,15 @@ public class ClientMonitor {
     }
 
     synchronized void acceptCall(Action action) {
-        boolean audioMonExists = false;
-        for(AudioMonitor am : audioReceivers){
-            if(am.getAudioSender().equals(action.getSender())){
-                audioMonExists = true;
-            }
-        }
-        if(!audioMonExists){
-            audioReceivers.add(new AudioMonitor(action.getSender(), speaker));
-        }
+//        boolean audioMonExists = false;
+//        for(AudioMonitor am : audioReceivers){
+//            if(am.getAudioSender().equals(action.getSender())){
+//                audioMonExists = true;
+//            }
+//        }
+//        if(!audioMonExists){
+//            audioReceivers.add(new AudioMonitor(action.getSender(), speaker));
+//        }
 
         if (aw == null) {
             aw = new AudioWriter(this);
@@ -382,32 +382,32 @@ public class ClientMonitor {
         }
     }
 
-//    /**
-//     * @param action
-//     */
-//    public synchronized void receiveAudioData(Action action) {
-//
-//        byte[] data = action.getAudioData();
-//        ByteArrayInputStream bais = new ByteArrayInputStream(data);
-//        AudioInputStream ais = new AudioInputStream(bais, format, data.length);
-//        int bytesRead;
-//        try {
-//            if ((bytesRead = ais.read(data)) != -1) {
-//                System.out.println("Writing to audio output.");
-//                speaker.write(data, 0, bytesRead);
-//
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//
-//        try {
-//            ais.close();
-//            bais.close();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
+    /**
+     * @param action
+     */
+    public synchronized void receiveAudioData(Action action) {
+
+        byte[] data = action.getAudioData();
+        ByteArrayInputStream bais = new ByteArrayInputStream(data);
+        AudioInputStream ais = new AudioInputStream(bais, format, data.length);
+        int bytesRead;
+        try {
+            if ((bytesRead = ais.read(data)) != -1) {
+                System.out.println("Writing to audio output.");
+                speaker.write(data, 0, bytesRead);
+
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            ais.close();
+            bais.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
 //    public synchronized void receiveAudioData(Action action) {
 
