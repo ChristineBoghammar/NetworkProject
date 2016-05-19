@@ -30,6 +30,7 @@ public class AudioReader extends Thread {
 
     public AudioReader(AudioMonitor mon) {
         this.mon = mon;
+        System.out.println("AudioReader created");
     }
 
     public void run() {

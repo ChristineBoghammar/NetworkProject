@@ -25,6 +25,7 @@ public class AudioMonitor {
         this.speaker = speaker;
         this.actions = new LinkedList<Action>();
         receiving = true;
+        System.out.println("AudioMonitor created");
         new AudioReader(this).start();
     }
 
@@ -63,10 +64,10 @@ public class AudioMonitor {
         try {
             if(speaker.isOpen() && receiving){
                 if ((bytesRead = ais.read(data)) != -1) {
-                    System.out.println("Writing to audio output.");
-                    long time = System.currentTimeMillis();
+//                    System.out.println("Writing to audio output.");
+//                    long time = System.currentTimeMillis();
                     speaker.write(data, 0, bytesRead);
-                    System.out.println(System.currentTimeMillis() - time);
+//                    System.out.println(System.currentTimeMillis() - time);
                 }
             } else {
                 receiving = false;

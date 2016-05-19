@@ -65,12 +65,10 @@ public class ClientGUI extends Application {
 
             ClientMonitor mon = new ClientMonitor(name, s, cgc, agc, this);
             ClientReader cr = new ClientReader(mon, s);
-            ClientWriter cw1 = new ClientWriter(mon, s);
-            ClientWriter cw2 = new ClientWriter(mon, s);
+            ClientWriter cw = new ClientWriter(mon, s);
 
             cr.start();
-            cw1.start();
-            cw2.start();
+            cw.start();
             mon.putAction(new Action(name, name, 0, -1));
 
 
