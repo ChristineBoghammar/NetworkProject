@@ -8,15 +8,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="02e2fb14-f038-4f03-862f-560f9e4b584b" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/NetworkProject/client/AudioWriter.class" afterPath="$PROJECT_DIR$/out/production/NetworkProject/client/AudioWriter.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/NetworkProject/client/ClientMonitor.class" afterPath="$PROJECT_DIR$/out/production/NetworkProject/client/ClientMonitor.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/NetworkProject/client/ClientWriter.class" afterPath="$PROJECT_DIR$/out/production/NetworkProject/client/ClientWriter.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/NetworkProject/server/ServerMonitor.class" afterPath="$PROJECT_DIR$/out/production/NetworkProject/server/ServerMonitor.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/client/AudioMonitor.java" afterPath="$PROJECT_DIR$/src/client/AudioMonitor.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/client/ClientMonitor.java" afterPath="$PROJECT_DIR$/src/client/ClientMonitor.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/client/ClientWriter.java" afterPath="$PROJECT_DIR$/src/client/ClientWriter.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/server/ServerMonitor.java" afterPath="$PROJECT_DIR$/src/server/ServerMonitor.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/client/AudioWriter.java" afterPath="$PROJECT_DIR$/src/client/AudioWriter.java" />
     </list>
     <ignored path="NetworkProject.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -130,8 +122,8 @@
       <file leaf-file-name="AudioWriter.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/client/AudioWriter.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="598">
-              <caret line="52" column="93" selection-start-line="52" selection-start-column="93" selection-end-line="52" selection-end-column="93" />
+            <state relative-caret-position="312">
+              <caret line="41" column="13" selection-start-line="41" selection-start-column="13" selection-end-line="41" selection-end-column="13" />
               <folding />
             </state>
           </provider>
@@ -977,7 +969,7 @@
       <workItem from="1463508381738" duration="3540000" />
       <workItem from="1463513781449" duration="8021000" />
       <workItem from="1463572743940" duration="159000" />
-      <workItem from="1463650032718" duration="11705000" />
+      <workItem from="1463650032718" duration="11778000" />
     </task>
     <task id="LOCAL-00001" summary="fixed args">
       <created>1463129807469</created>
@@ -1004,11 +996,11 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="138949000" />
+    <option name="totallyTimeSpent" value="139022000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="130" y="48" width="3070" height="1752" extended-state="6" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -1018,7 +1010,7 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32982674" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.41027227" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.41027227" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -1490,8 +1482,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/client/AudioWriter.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="598">
-          <caret line="52" column="93" selection-start-line="52" selection-start-column="93" selection-end-line="52" selection-end-column="93" />
+        <state relative-caret-position="312">
+          <caret line="41" column="13" selection-start-line="41" selection-start-column="13" selection-end-line="41" selection-end-column="13" />
           <folding />
         </state>
       </provider>

@@ -46,6 +46,7 @@ public class AudioWriter extends Thread {
             e.printStackTrace();
         }
         System.out.println("Mic open.");
+
         byte tmpBuff[];
         assert mic != null;
         mic.start();
