@@ -4,6 +4,7 @@ import protocol.Action;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.ArrayList;
 
 /**
  * Created by johan on 2016-05-04.
@@ -88,7 +89,11 @@ public class ClientWriter extends Thread {
                     break;
 
                 case RECIEVE_AUDIO_DATA:
-                    mon.receiveAudioData(action);
+                    ArrayList<AudioMonitor> receivers = mon.getAudioReceivers();
+                    for(AudioMonitor audioMon : receivers){
+                        audioMon.putAction(action);
+                    }
+//                    mon.receiveAudioData(action);
                     break;
 
                 case UPDATE_CLIENT_LIST:

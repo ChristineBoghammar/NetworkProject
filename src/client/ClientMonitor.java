@@ -10,6 +10,7 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -35,6 +36,7 @@ public class ClientMonitor {
     private ActiveCallGUIController agc;
     private ClientGUI gui;
     private ArrayList<String> senders;
+    private ArrayList<AudioMonitor> audioReceivers;
 
     private final int CONNECT = 0;
     private final int DISCONNECT = 1;
@@ -70,9 +72,10 @@ public class ClientMonitor {
         this.cgc = cgc;
         this.agc = agc;
         this.gui = gui;
-        callID = -1;
+        this.callID = -1;
         this.callList = new ArrayList<String>();
         this.senders = new ArrayList<String>();
+        this.audioReceivers = new ArrayList<AudioMonitor>();
         try {
             oos = new ObjectOutputStream(s.getOutputStream());
             os = s.getOutputStream();
@@ -143,7 +146,7 @@ public class ClientMonitor {
         } catch (LineUnavailableException e) {
             e.printStackTrace();
         }
-        speaker.start();
+        speaker.start(); // Möjligen här buggen med speaker ligger?
         try {
             oos.writeObject(action);
             System.out.println("RequestCall Action written to server");
@@ -156,6 +159,16 @@ public class ClientMonitor {
     }
 
     synchronized void acceptCall(Action action) {
+        boolean audioMonExists = false;
+        for(AudioMonitor am : audioReceivers){
+            if(am.getAudioSender().equals(action.getSender())){
+                audioMonExists = true;
+            }
+        }
+        if(!audioMonExists){
+            audioReceivers.add(new AudioMonitor(action.getSender(), speaker));
+        }
+
         if (aw == null) {
             aw = new AudioWriter(this);
             aw.start();
@@ -241,7 +254,7 @@ public class ClientMonitor {
             };
 
             runGUIUpdate(runnable);
-            if (accept) { // Om användaren godkänner eller ej
+            if (accept) {
                 System.out.println("Accepterade samtalet");
                 DataLine.Info speakerInfo = new DataLine.Info(SourceDataLine.class, format);
                 try {
@@ -252,6 +265,16 @@ public class ClientMonitor {
                     e.printStackTrace();
                 }
                 speaker.start();
+
+                boolean audioMonExists = false;
+                for(AudioMonitor am : audioReceivers){
+                    if(am.getAudioSender().equals(action.getSender())){
+                        audioMonExists = true;
+                    }
+                }
+                if(!audioMonExists){
+                    audioReceivers.add(new AudioMonitor(action.getSender(), speaker));
+                }
 
                 callID = action.getCallID();
                 Action response = new Action("y", getName(), ACCEPT_CALL, action.getCallID());
@@ -301,6 +324,10 @@ public class ClientMonitor {
      */
 
     public synchronized void closeCall() {
+        for(AudioMonitor am : audioReceivers){
+            am.setReceiving(false);
+        }
+        audioReceivers.clear();
         Action closeAction = new Action("content", getName(), CLOSE_CALL, callID);
         callID = -1;
         try {
@@ -320,6 +347,15 @@ public class ClientMonitor {
      * @param action
      */
     public synchronized void receiveCloseCall(Action action) {
+        ArrayList<AudioMonitor> toRemove = new ArrayList<AudioMonitor>();
+        for(AudioMonitor am : audioReceivers){
+            if(am.getAudioSender().equals(action.getSender())){
+                am.setReceiving(false);
+                toRemove.add(am);
+
+            }
+        }
+        audioReceivers.removeAll(toRemove);
         System.out.println(action.getSender() + " Has left the call");
     }
 
@@ -346,9 +382,9 @@ public class ClientMonitor {
         }
     }
 
-    /**
-     * @param action
-     */
+//    /**
+//     * @param action
+//     */
 //    public synchronized void receiveAudioData(Action action) {
 //
 //        byte[] data = action.getAudioData();
@@ -373,9 +409,9 @@ public class ClientMonitor {
 //        }
 //    }
 
-    public synchronized void receiveAudioData(Action action) {
+//    public synchronized void receiveAudioData(Action action) {
 
-        String sender = action.getSender();
+//        String sender = action.getSender();
 //        for(String s : senders) {
 //            if (!sender.equals(s)) {
 //                AudioReader ar = new AudioReader(sender, action, format, speaker);
@@ -384,12 +420,12 @@ public class ClientMonitor {
 //
 //            }
 //        }
-        AudioReader ar = new AudioReader(sender, action, format, speaker);
-        ar.start();
-
-
-
-    }
+//        AudioReader ar = new AudioReader(sender, action, format, speaker);
+//        ar.start();
+//
+//
+//
+//    }
 
 
     public void runGUIUpdate(Runnable runnable){
@@ -441,6 +477,10 @@ public class ClientMonitor {
             agc.updateConnectedParticipants(updatedCallList);
         };
         runGUIUpdate(runnable);
+    }
+
+    public ArrayList<AudioMonitor> getAudioReceivers() {
+        return audioReceivers;
     }
 }
 

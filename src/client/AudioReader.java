@@ -12,43 +12,58 @@ import java.io.IOException;
  * Created by Viktor on 2016-05-17.
  */
 public class AudioReader extends Thread {
-    private String sender;
-    private Action action;
-    private AudioFormat format;
-    private SourceDataLine speaker;
+    private final int CONNECT = 0;
+    private final int DISCONNECT = 1;
+    private final int INITIATE_CALL = 2;
+    private final int ACCEPT_CALL = 3;
+    private final int CLOSE_CALL = 4;
+    private final int COMMUNICATE_TO_CALL = 5;
+    private final int RECIEVE_REQUESTED_CALL = 6;
+    private final int REJECT_CALL = 7;
+    private final int RECIEVE_CLOSE_CALL = 8;
+    private final int RECIEVE_CALL_ID = 9;
+    private final int RECIEVE_FROM_CALL = 10;
+    private final int SEND_AUDIO_DATA = 11;
+    private final int RECIEVE_AUDIO_DATA = 12;
 
-    public AudioReader(String sender, Action action, AudioFormat format, SourceDataLine speaker){
-        this.sender = sender;
-        this.action = action;
-        this.format = format;
-        this.speaker = speaker;
+    private AudioMonitor mon;
+
+    public AudioReader(AudioMonitor mon) {
+        this.mon = mon;
     }
 
     public void run() {
-        byte[] data = action.getAudioData();
-        ByteArrayInputStream bais = new ByteArrayInputStream(data);
-        AudioInputStream ais = new AudioInputStream(bais, format, data.length);
-        int bytesRead;
-        try {
-            if ((bytesRead = ais.read(data)) != -1) {
-                System.out.println("Writing to audio output.");
-                speaker.write(data, 0, bytesRead);
-
+        while (mon.isReceiving()) {
+            Action action = mon.getAction();
+            if (action.getCmd() == RECIEVE_AUDIO_DATA) {
+                mon.receiveAudioData(action);
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
-
-        try {
-            ais.close();
-            bais.close();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//
+//        byte[] data = action.getAudioData();
+//        ByteArrayInputStream bais = new ByteArrayInputStream(data);
+//        AudioInputStream ais = new AudioInputStream(bais, format, data.length);
+//        int bytesRead;
+//        try {
+//            if ((bytesRead = ais.read(data)) != -1) {
+//                System.out.println("Writing to audio output.");
+//                speaker.write(data, 0, bytesRead);
+//
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//        try {
+//            ais.close();
+//            bais.close();
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
     }
 
-    }
+}
 
 
 
