@@ -8,9 +8,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="02e2fb14-f038-4f03-862f-560f9e4b584b" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/client/ClientMonitor.java" afterPath="$PROJECT_DIR$/src/client/ClientMonitor.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/client/ClientWriter.java" afterPath="$PROJECT_DIR$/src/client/ClientWriter.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/server/ServerMonitor.java" afterPath="$PROJECT_DIR$/src/server/ServerMonitor.java" />
     </list>
     <ignored path="NetworkProject.iws" />
@@ -80,8 +77,8 @@
       <file leaf-file-name="ServerMonitor.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/server/ServerMonitor.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="588">
-              <caret line="400" column="0" selection-start-line="400" selection-start-column="0" selection-end-line="400" selection-end-column="0" />
+            <state relative-caret-position="465">
+              <caret line="418" column="16" selection-start-line="418" selection-start-column="16" selection-end-line="418" selection-end-column="16" />
               <folding />
             </state>
           </provider>
@@ -981,7 +978,7 @@
       <workItem from="1463508381738" duration="3540000" />
       <workItem from="1463513781449" duration="8021000" />
       <workItem from="1463572743940" duration="159000" />
-      <workItem from="1463650032718" duration="7807000" />
+      <workItem from="1463650032718" duration="8372000" />
     </task>
     <task id="LOCAL-00001" summary="fixed args">
       <created>1463129807469</created>
@@ -1008,7 +1005,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="135051000" />
+    <option name="totallyTimeSpent" value="135616000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="130" y="48" width="3070" height="1752" extended-state="6" />
@@ -1504,8 +1501,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/server/ServerMonitor.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="588">
-          <caret line="400" column="0" selection-start-line="400" selection-start-column="0" selection-end-line="400" selection-end-column="0" />
+        <state relative-caret-position="465">
+          <caret line="418" column="16" selection-start-line="418" selection-start-column="16" selection-end-line="418" selection-end-column="16" />
           <folding />
         </state>
       </provider>

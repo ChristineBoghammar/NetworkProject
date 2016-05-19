@@ -416,7 +416,7 @@ public class ServerMonitor {
     private  void sendAudioPacket(ArrayList<Action> audioToSend, Participant p, Action action) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
         for(Action a : audioToSend){
-            if(a.getSender().equals(p.getName())){
+            if(!a.getSender().equals(p.getName())){
                 try {
                     outputStream.write(action.getAudioData());
                 } catch (IOException e) {
