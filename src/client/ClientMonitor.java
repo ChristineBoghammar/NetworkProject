@@ -355,8 +355,9 @@ public class ClientMonitor {
         int bytesRead;
         try {
             if ((bytesRead = ais.read(data)) != -1) {
-                System.out.println("Writing to audio output.");
+                long time = System.currentTimeMillis();
                 speaker.write(data, 0, bytesRead);
+                System.out.println(System.currentTimeMillis() - time);
 
             }
         } catch (IOException e) {
