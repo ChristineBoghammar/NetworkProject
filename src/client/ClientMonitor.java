@@ -137,12 +137,13 @@ public class ClientMonitor {
 
     @SuppressWarnings("Duplicates")
     public synchronized void requestCall(Action action) {
-
+        int BUFFER_SIZE = 2048;
+        byte[] buffer = new byte[BUFFER_SIZE];
         DataLine.Info speakerInfo = new DataLine.Info(SourceDataLine.class, format);
         try {
             speaker = (SourceDataLine) AudioSystem.getLine(speakerInfo);
             System.out.println(speaker.toString());
-            speaker.open(format);
+            speaker.open(format, BUFFER_SIZE);
         } catch (LineUnavailableException e) {
             e.printStackTrace();
         }
@@ -301,7 +302,7 @@ public class ClientMonitor {
 
     @SuppressWarnings("Duplicates")
     private AudioFormat getAudioFormat() {
-        float sampleRate = 16000.0F;
+        float sampleRate = 8000.0F;
         int sampleSizeBits = 16;
         int channels = 1;
         boolean signed = true;
