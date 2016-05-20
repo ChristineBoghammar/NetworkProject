@@ -36,6 +36,7 @@ public class ServerMonitor {
     private final int RECIEVE_AUDIO_DATA = 12;
     private final int UPDATE_CLIENT_LIST = 13;
     private final int UPDATE_CALL_LIST = 14;
+    private final int RECEIVE_MESSAGE = 15;
     /**
      * Possible cmd's are:
      * 0 - Connect to server
@@ -358,17 +359,6 @@ public class ServerMonitor {
             callSendAudioInterval.remove(actualCall.getID());
             audioToSend.remove(actualCall.getID());
         }
-
-//        for(Participant p : actualCall.getAcceptedCallList()){
-//            Action updateCallListAction = new Action("null", p.getName(), UPDATE_CALL_LIST, getCallList(actualCall));
-//            try {
-//                p.getObjectOutputStream().writeObject(updateCallListAction);
-//                p.getObjectOutputStream().flush();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
-
     }
 
     private boolean sentAudioPackets = false;
@@ -380,37 +370,20 @@ public class ServerMonitor {
 
     @SuppressWarnings("Duplicates")
     public synchronized void sendAudio(Action action) {
-        System.out.println("KOM HIT 1");
         if(!sentAudio.get(action.getCallID())){
             callSendAudioInterval.put(action.getCallID(), System.currentTimeMillis());
-            System.out.println("KOM HIT 2");
         }
-
         audioToSend.get(action.getCallID()).add(action);
 
         if((System.currentTimeMillis() - timeSinceSent) > 500){
             for(Participant p : getCall(action.getCallID()).getAcceptedCallList()){
                 if(participants.contains(p)){
-                    System.out.println("KOM HIT 3");
                     sendAudioPacket(audioToSend.get(action.getCallID()), p, action);
                 }
             }
             audioToSend.get(action.getCallID()).clear();
             sentAudio.put(action.getCallID(), false);
         }
-
-//        Action sendAction = new Action(action.getAudioData(), action.getSender(), RECIEVE_AUDIO_DATA, action.getCallID());
-//        for (Participant p : getCall(action.getCallID()).getAcceptedCallList()) {
-//            if (!p.getName().equals(action.getSender()) && participants.contains(p)) {
-//                try {
-//                    p.getObjectOutputStream().writeObject(sendAction);
-//                    p.getObjectOutputStream().flush();
-//                } catch (IOException e) {
-//                    // TODO Auto-generated catch block
-//                    e.printStackTrace();
-//                }
-//            }
-//        }
     }
 
     private  void sendAudioPacket(ArrayList<Action> audioToSend, Participant p, Action action) {
@@ -433,7 +406,6 @@ public class ServerMonitor {
             e.printStackTrace();
         }
     }
-
 
     /**
      * Handles the disconnected client and updated the remaining clients with a list of connected clients.
@@ -462,5 +434,22 @@ public class ServerMonitor {
                 e.printStackTrace();
             }
         }
+    }
+
+    /**
+     * Sends a written message to all participants in the aimed call.
+     * @param action, containing message.
+     */
+    public void sendToCall(Action action) {
+        Action sendMessage = new Action(action.getContent(), action.getSender(), RECEIVE_MESSAGE, action.getCallID());
+        for(Participant p : getCall(action.getCallID()).getAcceptedCallList()){
+            try {
+                p.getObjectOutputStream().writeObject(sendMessage);
+                p.getObjectOutputStream().flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 }

@@ -33,6 +33,7 @@ public class ClientWriter extends Thread {
     private final int RECIEVE_AUDIO_DATA = 12;
     private final int UPDATE_CLIENT_LIST = 13;
     private final int UPDATE_CALL_LIST = 14;
+    private final int RECEIVE_MESSAGE = 15;
 
 
 
@@ -98,6 +99,8 @@ public class ClientWriter extends Thread {
                 case UPDATE_CALL_LIST:
                     mon.updateCallList(action);
                     break;
+                case RECEIVE_MESSAGE:
+                    mon.receiveMessage(action);
             }
         }
     }
