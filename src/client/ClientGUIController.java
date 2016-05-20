@@ -39,6 +39,9 @@ public class ClientGUIController implements Initializable {
     private Button callButton;
 
     @FXML
+    private Button recordButton;
+
+    @FXML
     private ListView<String> connectedContacts;
 
     @FXML
@@ -66,13 +69,26 @@ public class ClientGUIController implements Initializable {
             @Override
             public void handle(ActionEvent event) {
                 System.out.println("Tryckte på callButton");
-                if (callList.size() > 0) {
+                if (callList.size() > 0 && (mon.getCallID() == -1)) {
                     mon.putAction(new Action(null, mon.getName(), INITIATE_CALL, callList));
                 } else {
                     System.out.println("No users selected for call");
                 }
             }
         });
+
+        recordButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                System.out.println("Tryckte på recordButton");
+                if(callList.size() > 0){
+                    byte[] audio = new byte[];
+                    recordAudio();
+                    mon.putAction(new Action());
+                }
+            }
+        });
+
         connectedContacts.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         connectedContacts.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -88,6 +104,25 @@ public class ClientGUIController implements Initializable {
                 }
             }
         });
+    }
+
+    private void recordAudio() {
+        System.out.println("Recording audio");
+
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Recording call to following participants:");
+        alert.setHeaderText(callList.toString());
+        alert.setContentText("Press 'Stop' to send the recording");
+
+        ButtonType buttonTypeOne = new ButtonType("Stop");
+        alert.getButtonTypes().setAll(buttonTypeOne);
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == buttonTypeOne) {
+
+        } else {
+            System.out.println("How did you get here?");
+        }
     }
 
     public void setLabelName(String name){
