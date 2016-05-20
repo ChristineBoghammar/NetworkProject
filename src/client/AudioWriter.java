@@ -46,19 +46,20 @@ public class AudioWriter extends Thread {
             e.printStackTrace();
         }
         System.out.println("Mic open.");
+
         byte tmpBuff[];
         assert mic != null;
         mic.start();
         long time;
         while (mon.getCallID() != -1 && (mic.read((tmpBuff = new byte[mic.getBufferSize() / 5]), 0, tmpBuff.length)) > 0) {
-            time = System.currentTimeMillis();
+//            time = System.currentTimeMillis();
             mon.putAction(new Action(tmpBuff, mon.getName(), SEND_AUDIO_DATA, mon.getCallID()));
             try {
                 this.sleep(100);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            System.out.println(System.currentTimeMillis() - time);
+//            System.out.println(System.currentTimeMillis() - time);
         }
     }
 

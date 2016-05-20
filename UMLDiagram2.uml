@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement />
+  <nodes>
+    <node x="717.75" y="536.0">client.ClientReader</node>
+    <node x="323.99999999999994" y="423.0">server.ServerReader</node>
+    <node x="1007.0753968253969" y="649.0">client.ClientMain</node>
+    <node x="318.9769841269842" y="0.0">server.Call</node>
+    <node x="994.1603174603175" y="310.0">client.AudioWriter</node>
+    <node x="1052.5603174603175" y="423.0">client.ClientMonitor</node>
+    <node x="467.5603174603175" y="549.5">server.ServerMain</node>
+    <node x="393.49999999999994" y="310.0">server.ServerMonitor</node>
+    <node x="823.3865079365078" y="113.0">protocol.Action</node>
+    <node x="1041.75" y="536.0">client.ClientWriter</node>
+    <node x="0.0" y="423.0">server.ServerWriter</node>
+    <node x="270.47698412698423" y="140.0">server.Participant</node>
+    <node x="0.0" y="730.0">client.GUI</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="client.ClientMain" target="client.ClientReader">
+      <point x="-14.0" y="-18.0" />
+      <point x="1049.0753968253969" y="619.0" />
+      <point x="869.75" y="619.0" />
+      <point x="0.0" y="31.5" />
+    </edge>
+    <edge source="client.AudioWriter" target="client.ClientMonitor">
+      <point x="83.0" y="31.5" />
+      <point x="1201.6603174603174" y="398.0" />
+      <point x="1181.5603174603175" y="398.0" />
+      <point x="0.0" y="-31.5" />
+    </edge>
+    <edge source="client.ClientReader" target="client.ClientMonitor">
+      <point x="0.0" y="-31.5" />
+      <point x="869.75" y="516.0" />
+      <point x="1095.5603174603175" y="516.0" />
+      <point x="-86.0" y="31.5" />
+    </edge>
+    <edge source="server.ServerMain" target="server.ServerReader">
+      <point x="0.0" y="-18.0" />
+      <point x="525.0603174603175" y="506.0" />
+      <point x="478.99999999999994" y="506.0" />
+      <point x="0.0" y="31.5" />
+    </edge>
+    <edge source="client.AudioWriter" target="protocol.Action">
+      <point x="0.0" y="-31.5" />
+      <point x="1118.6603174603174" y="290.0" />
+      <point x="994.3031746031745" y="290.0" />
+      <point x="24.416666666666686" y="58.5" />
+    </edge>
+    <edge source="server.Participant" target="server.Call">
+      <point x="-59.5" y="-31.5" />
+      <point x="329.97698412698423" y="88.0" />
+      <point x="353.2269841269842" y="88.0" />
+      <point x="-102.75" y="31.5" />
+    </edge>
+    <edge source="server.ServerMonitor" target="server.Participant">
+      <point x="-71.25" y="-31.5" />
+      <point x="407.74999999999994" y="290.0" />
+      <point x="329.97698412698423" y="290.0" />
+      <point x="-59.5" y="31.5" />
+    </edge>
+    <edge source="server.ServerMonitor" target="protocol.Action">
+      <point x="71.25" y="-31.5" />
+      <point x="550.25" y="280.0" />
+      <point x="896.6365079365078" y="280.0" />
+      <point x="-73.25" y="58.5" />
+    </edge>
+    <edge source="server.Call" target="server.Participant">
+      <point x="-34.25" y="31.5" />
+      <point x="421.7269841269842" y="88.0" />
+      <point x="448.97698412698423" y="88.0" />
+      <point x="59.5" y="-31.5" />
+    </edge>
+    <edge source="server.ServerReader" target="server.ServerMonitor">
+      <point x="0.0" y="-31.5" />
+      <point x="0.0" y="31.5" />
+    </edge>
+    <edge source="client.ClientWriter" target="client.ClientMonitor">
+      <point x="0.0" y="-31.5" />
+      <point x="1190.75" y="516.0" />
+      <point x="1181.5603174603175" y="516.0" />
+      <point x="0.0" y="31.5" />
+    </edge>
+    <edge source="server.ServerMonitor" target="server.Call">
+      <point x="-14.25" y="-31.5" />
+      <point x="464.74999999999994" y="250.0" />
+      <point x="518.9769841269842" y="250.0" />
+      <point x="518.9769841269842" y="88.0" />
+      <point x="490.2269841269842" y="88.0" />
+      <point x="34.25" y="31.5" />
+    </edge>
+    <edge source="server.ServerMain" target="server.ServerMonitor">
+      <point x="38.33333333333337" y="-18.0" />
+      <point x="563.3936507936509" y="516.0" />
+      <point x="644.5" y="516.0" />
+      <point x="644.5" y="398.0" />
+      <point x="536.0" y="398.0" />
+      <point x="57.0" y="31.5" />
+    </edge>
+    <edge source="server.ServerMain" target="server.ServerWriter">
+      <point x="-38.33333333333337" y="-18.0" />
+      <point x="486.7269841269841" y="516.0" />
+      <point x="152.0" y="516.0" />
+      <point x="0.0" y="31.5" />
+    </edge>
+    <edge source="client.ClientMain" target="client.ClientWriter">
+      <point x="14.0" y="-18.0" />
+      <point x="1077.0753968253969" y="619.0" />
+      <point x="1190.75" y="619.0" />
+      <point x="0.0" y="31.5" />
+    </edge>
+    <edge source="client.ClientMonitor" target="protocol.Action">
+      <point x="51.60000000000002" y="-31.5" />
+      <point x="1233.1603174603174" y="398.0" />
+      <point x="1253.6603174603174" y="398.0" />
+      <point x="1253.6603174603174" y="280.0" />
+      <point x="1043.1365079365078" y="280.0" />
+      <point x="73.25000000000003" y="58.5" />
+    </edge>
+    <edge source="client.ClientMonitor" target="client.AudioWriter">
+      <point x="-103.19999999999999" y="-31.5" />
+      <point x="1078.3603174603174" y="398.0" />
+      <point x="1035.6603174603174" y="398.0" />
+      <point x="-83.0" y="31.5" />
+    </edge>
+    <edge source="client.ClientMain" target="protocol.Action">
+      <point x="-42.0" y="-18.0" />
+      <point x="1021.0753968253969" y="629.0" />
+      <point x="707.25" y="629.0" />
+      <point x="707.25" y="290.0" />
+      <point x="945.4698412698411" y="290.0" />
+      <point x="-24.416666666666657" y="58.5" />
+    </edge>
+    <edge source="server.ServerWriter" target="server.ServerMonitor">
+      <point x="0.0" y="-31.5" />
+      <point x="152.0" y="398.0" />
+      <point x="421.99999999999994" y="398.0" />
+      <point x="-57.0" y="31.5" />
+    </edge>
+    <edge source="client.ClientMain" target="client.ClientMonitor">
+      <point x="42.0" y="-18.0" />
+      <point x="1105.0753968253969" y="629.0" />
+      <point x="1350.25" y="629.0" />
+      <point x="1350.25" y="516.0" />
+      <point x="1267.5603174603175" y="516.0" />
+      <point x="86.0" y="31.5" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="0.6959287531806616" x="675.5" y="383.0" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Constructors</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+
