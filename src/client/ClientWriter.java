@@ -2,9 +2,7 @@ package client;
 
 import protocol.Action;
 
-import java.io.IOException;
 import java.net.Socket;
-import java.util.ArrayList;
 
 /**
  * Created by johan on 2016-05-04.
@@ -34,7 +32,8 @@ public class ClientWriter extends Thread {
     private final int UPDATE_CLIENT_LIST = 13;
     private final int UPDATE_CALL_LIST = 14;
     private final int RECEIVE_MESSAGE = 15;
-    private final int RECEIVE_AUDIO_MESSAGE = 16;
+    private final int SEND_AUDIO_MESSAGE = 16;
+    private final int RECEIVE_AUDIO_MESSAGE = 17;
 
 
 
@@ -104,7 +103,7 @@ public class ClientWriter extends Thread {
                     mon.receiveMessage(action);
                     break;
                 case RECEIVE_AUDIO_MESSAGE:
-                    mon.receivAudioMessage(action);
+                    mon.receiveAudioMessage(action);
             }
         }
     }

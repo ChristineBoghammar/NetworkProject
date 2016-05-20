@@ -25,6 +25,8 @@ public class ServerWriter extends Thread  {
     private final int SEND_AUDIO_DATA = 11;
     private final int RECIEVE_AUDIO_DATA = 12;
     private final int SEND_AUDIO_MESSAGE = 16;
+    private final int RECEIVE_AUDIO_MESSAGE = 17;
+
 
 
 

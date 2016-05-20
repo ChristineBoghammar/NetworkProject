@@ -107,7 +107,6 @@ public class ClientGUIController implements Initializable {
     }
 
     private void recordAudio() {
-        mon.recordAudioMessage();
 
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Recording call to following participants:");
@@ -119,7 +118,9 @@ public class ClientGUIController implements Initializable {
 
 
         Optional<ButtonType> result = alert.showAndWait();
+        mon.recordAudioMessage();
         if (result.get() == buttonTypeOne) {
+            System.out.println("Kom till stopButton");
             mon.sendAudioMessage();
         } else {
             System.out.println("How did you get here?");

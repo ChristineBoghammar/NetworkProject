@@ -50,6 +50,8 @@ public class ClientMonitor {
     private final int UPDATE_CLIENT_LIST = 13;
     private final int RECEIVE_MESSAGE = 15;
     private final int SEND_AUDIO_MESSAGE = 16;
+    private final int RECEIVE_AUDIO_MESSAGE = 17;
+
 
 
     /**
@@ -477,7 +479,7 @@ public class ClientMonitor {
     private ByteArrayOutputStream audioMessage;
 
     public void recordAudioMessage() {
-        System.out.println("Started AudioWriter");
+        System.out.println("Started: ");
         DataLine.Info micInfo = new DataLine.Info(TargetDataLine.class, format);
         TargetDataLine mic = null;
         try {
@@ -492,9 +494,10 @@ public class ClientMonitor {
         byte tmpBuff[];
         assert mic != null;
         mic.start();
-        while (this.getCallID() != -1 && (mic.read((tmpBuff = new byte[mic.getBufferSize() / 5]), 0, tmpBuff.length)) > 0) {
+        while ((mic.read((tmpBuff = new byte[mic.getBufferSize() / 5]), 0, tmpBuff.length)) > 0) {
             try {
                 audioMessage.write(tmpBuff);
+                System.out.println("skrivit ljud");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -503,7 +506,8 @@ public class ClientMonitor {
 
 
     public void sendAudioMessage() {
-        Action sendAudioMessage = new Action(audioMessage.toByteArray(), getName(), SEND_AUDIO_MESSAGE, callList);
+        System.out.println("Kom till sendAudioMessage");
+        Action sendAudioMessage = new Action(audioMessage.toByteArray(), getName(), SEND_AUDIO_MESSAGE,cgc.getSelectedList());
         try {
             oos.writeObject(sendAudioMessage);
             oos.flush();
@@ -514,8 +518,8 @@ public class ClientMonitor {
 
     }
 
-    public void receivAudioMessage(Action action) {
-        File someFile = new File(action.getSender() + ".mp3");
+    public void receiveAudioMessage(Action action) {
+        File someFile = new File(action.getSender() + ".wav");
         System.out.println("Received a voicemail from " + action.getSender());
         FileOutputStream fos = null;
         try {

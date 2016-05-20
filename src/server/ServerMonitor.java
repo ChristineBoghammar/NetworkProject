@@ -37,7 +37,9 @@ public class ServerMonitor {
     private final int UPDATE_CLIENT_LIST = 13;
     private final int UPDATE_CALL_LIST = 14;
     private final int RECEIVE_MESSAGE = 15;
-    private final int RECEIVE_AUDIO_MESSAGE = 16;
+    private final int SEND_AUDIO_MESSAGE = 16;
+    private final int RECEIVE_AUDIO_MESSAGE = 17;
+
     /**
      * Possible cmd's are:
      * 0 - Connect to server
@@ -455,13 +457,15 @@ public class ServerMonitor {
 
     public void sendAudioMessage(Action action) {
         Action receiveAction = new Action(action.getAudioData(), action.getSender(), RECEIVE_AUDIO_MESSAGE, action.getList());
-
-        for (Participant p : getCallParticipants(action.getList())) {
-            try {
-                p.getObjectOutputStream().writeObject(receiveAction);
-                p.getObjectOutputStream().flush();
-            } catch (IOException e) {
-                e.printStackTrace();
+        for (Participant p : participants) {
+            if(action.getList().contains(p.getName())){
+                try {
+                    System.out.println("Skicka audioMessage till " + p.getName());
+                    p.getObjectOutputStream().writeObject(receiveAction);
+                    p.getObjectOutputStream().flush();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
