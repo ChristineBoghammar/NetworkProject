@@ -61,12 +61,17 @@ public class AudioMonitor {
         ByteArrayInputStream bais = new ByteArrayInputStream(data);
         AudioInputStream ais = new AudioInputStream(bais, format, data.length);
         int bytesRead;
+        int BUFFER_SIZE = 2048;
+        byte[] bytesBuffer = new byte[BUFFER_SIZE];
         try {
             if(speaker.isOpen() && receiving){
                 if ((bytesRead = ais.read(data)) != -1) {
 //                    System.out.println("Writing to audio output.");
 //                    long time = System.currentTimeMillis();
-                    speaker.write(data, 0, bytesRead);
+                    speaker.write(bytesBuffer, 0, bytesRead);
+                    speaker.flush();
+
+
 //                    System.out.println(System.currentTimeMillis() - time);
                 }
             } else {
@@ -86,7 +91,7 @@ public class AudioMonitor {
 
     @SuppressWarnings("Duplicates")
     private AudioFormat getAudioFormat() {
-        float sampleRate = 16000.0F;
+        float sampleRate = 8000.0F;
         int sampleSizeBits = 16;
         int channels = 1;
         boolean signed = true;
