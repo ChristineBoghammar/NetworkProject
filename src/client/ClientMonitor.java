@@ -10,7 +10,6 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -345,7 +344,6 @@ public class ClientMonitor {
 //            if(audioMon.getAudioSender().equals(action.getSender())){
 //                audioMon.setReceiving(false);
 //                toRemove.add(am);
-
 //            }
 //        }
 //        audioReceivers.removeAll(toRemove);
@@ -472,12 +470,12 @@ public class ClientMonitor {
         runGUIUpdate(runnable);
     }
 
-//    public AudioMonitor getAudioMon(){
-//        return audioMon;
-//    }
-
+    /**
+     * Receives a message and displays it in the chat.
+     * @param action
+     */
     public synchronized void receiveMessage(Action action){
-        
+        agc.displayChat(action.getSender() + ": " + action.getContent());
     }
 }
 
