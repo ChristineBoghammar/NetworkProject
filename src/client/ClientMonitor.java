@@ -4,10 +4,7 @@ import javafx.application.Platform;
 import protocol.Action;
 
 import javax.sound.sampled.*;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -52,6 +49,7 @@ public class ClientMonitor {
     private final int RECIEVE_AUDIO_DATA = 12;
     private final int UPDATE_CLIENT_LIST = 13;
     private final int RECEIVE_MESSAGE = 15;
+    private final int SEND_AUDIO_MESSAGE = 16;
 
 
     /**
@@ -131,7 +129,6 @@ public class ClientMonitor {
      */
     public synchronized void putAction(Action action) {
         actions.add(action);
-        System.out.println("PutAction: " + "cmd: " + action.getCmd() + " content: " + action.getContent() + " sender: " + action.getSender() + " callId: " + action.getCallID());
         notifyAll();
     }
 
@@ -156,7 +153,6 @@ public class ClientMonitor {
             e.printStackTrace();
         }
 
-        System.out.println("cmd: " + action.getCmd() + " content: " + action.getContent() + " sender: " + action.getSender() + " callId: " + action.getList());
     }
 
     synchronized void acceptCall(Action action) {
@@ -273,7 +269,6 @@ public class ClientMonitor {
                 try {
                     oos.writeObject(response);
                     oos.flush();
-                    System.out.println("receiveRequest Action written to server");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -419,7 +414,7 @@ public class ClientMonitor {
 //    }
 
 
-    public void runGUIUpdate(Runnable runnable){
+    public void runGUIUpdate(Runnable runnable) {
         FutureTask<Void> task = new FutureTask<>(runnable, null);
         Platform.runLater(task);
         try {
@@ -472,10 +467,67 @@ public class ClientMonitor {
 
     /**
      * Receives a message and displays it in the chat.
+     *
      * @param action
      */
-    public synchronized void receiveMessage(Action action){
+    public synchronized void receiveMessage(Action action) {
         agc.displayChat(action.getSender() + ": " + action.getContent());
+    }
+
+    private ByteArrayOutputStream audioMessage;
+
+    public void recordAudioMessage() {
+        System.out.println("Started AudioWriter");
+        DataLine.Info micInfo = new DataLine.Info(TargetDataLine.class, format);
+        TargetDataLine mic = null;
+        try {
+            mic = (TargetDataLine) AudioSystem.getLine(micInfo);
+            mic.open(format);
+        } catch (LineUnavailableException e) {
+            e.printStackTrace();
+        }
+        System.out.println("Mic open.");
+
+        audioMessage = new ByteArrayOutputStream();
+        byte tmpBuff[];
+        assert mic != null;
+        mic.start();
+        while (this.getCallID() != -1 && (mic.read((tmpBuff = new byte[mic.getBufferSize() / 5]), 0, tmpBuff.length)) > 0) {
+            try {
+                audioMessage.write(tmpBuff);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+    public void sendAudioMessage() {
+        Action sendAudioMessage = new Action(audioMessage.toByteArray(), getName(), SEND_AUDIO_MESSAGE, callList);
+        try {
+            oos.writeObject(sendAudioMessage);
+            oos.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    public void receivAudioMessage(Action action) {
+        File someFile = new File(action.getSender() + ".mp3");
+        System.out.println("Received a voicemail from " + action.getSender());
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(someFile);
+            fos.write(action.getAudioData());
+            fos.flush();
+            fos.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
 

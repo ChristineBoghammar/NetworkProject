@@ -70,7 +70,7 @@ public class ClientGUIController implements Initializable {
             public void handle(ActionEvent event) {
                 System.out.println("Tryckte på callButton");
                 if (callList.size() > 0 && (mon.getCallID() == -1)) {
-                    mon.putAction(new Action(null, mon.getName(), INITIATE_CALL, callList));
+                    mon.putAction(new Action("", mon.getName(), INITIATE_CALL, callList));
                 } else {
                     System.out.println("No users selected for call");
                 }
@@ -82,9 +82,9 @@ public class ClientGUIController implements Initializable {
             public void handle(ActionEvent event) {
                 System.out.println("Tryckte på recordButton");
                 if(callList.size() > 0){
-                    byte[] audio = new byte[];
+//                    byte[] audio = new byte[];
                     recordAudio();
-                    mon.putAction(new Action());
+//                    mon.putAction(new Action());
                 }
             }
         });
@@ -107,7 +107,7 @@ public class ClientGUIController implements Initializable {
     }
 
     private void recordAudio() {
-        System.out.println("Recording audio");
+        mon.recordAudioMessage();
 
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Recording call to following participants:");
@@ -117,13 +117,16 @@ public class ClientGUIController implements Initializable {
         ButtonType buttonTypeOne = new ButtonType("Stop");
         alert.getButtonTypes().setAll(buttonTypeOne);
 
+
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == buttonTypeOne) {
-
+            mon.sendAudioMessage();
         } else {
             System.out.println("How did you get here?");
         }
     }
+
+
 
     public void setLabelName(String name){
         labelName.setText(name);

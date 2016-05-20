@@ -34,6 +34,7 @@ public class ClientWriter extends Thread {
     private final int UPDATE_CLIENT_LIST = 13;
     private final int UPDATE_CALL_LIST = 14;
     private final int RECEIVE_MESSAGE = 15;
+    private final int RECEIVE_AUDIO_MESSAGE = 16;
 
 
 
@@ -101,6 +102,9 @@ public class ClientWriter extends Thread {
                     break;
                 case RECEIVE_MESSAGE:
                     mon.receiveMessage(action);
+                    break;
+                case RECEIVE_AUDIO_MESSAGE:
+                    mon.receivAudioMessage(action);
             }
         }
     }

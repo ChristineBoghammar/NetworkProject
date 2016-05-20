@@ -37,6 +37,7 @@ public class ServerMonitor {
     private final int UPDATE_CLIENT_LIST = 13;
     private final int UPDATE_CALL_LIST = 14;
     private final int RECEIVE_MESSAGE = 15;
+    private final int RECEIVE_AUDIO_MESSAGE = 16;
     /**
      * Possible cmd's are:
      * 0 - Connect to server
@@ -140,7 +141,7 @@ public class ServerMonitor {
             contacts.add(p.getName());
         }
 
-        Action updateListAction = new Action(null, action.getSender(), UPDATE_CLIENT_LIST, contacts);
+        Action updateListAction = new Action("", action.getSender(), UPDATE_CLIENT_LIST, contacts);
 
         for (Participant p : participants) {
             try {
@@ -166,7 +167,7 @@ public class ServerMonitor {
         for (Participant p : participants) {
             contacts.add(p.getName());
         }
-        Action updateListAction = new Action(null, action.getSender(), UPDATE_CLIENT_LIST, contacts);
+        Action updateListAction = new Action("", action.getSender(), UPDATE_CLIENT_LIST, contacts);
 
         for (Participant p : participants) {
             try {
@@ -229,7 +230,6 @@ public class ServerMonitor {
         sentAudio.put(c.getID(), false);
 
         Action reqAction = new Action(action.getContent(), action.getSender(), RECIEVE_REQUESTED_CALL, c.getID());
-        System.out.println(reqAction.getContent() + " " + reqAction.getSender() + " " + reqAction.getCmd() + " " + reqAction.getCallID());
         for (Participant p : getCallParticipants(action.getList())) {
             try {
                 p.getObjectOutputStream().writeObject(reqAction);
@@ -425,7 +425,7 @@ public class ServerMonitor {
         }
         participants.removeAll(toRemove);
 
-        Action updateListAction = new Action(null, disconnectedClient, UPDATE_CLIENT_LIST, contacts);
+        Action updateListAction = new Action("", disconnectedClient, UPDATE_CLIENT_LIST, contacts);
         for (Participant p : participants) {
             try {
                 p.getObjectOutputStream().writeObject(updateListAction);
@@ -451,5 +451,18 @@ public class ServerMonitor {
             }
         }
 
+    }
+
+    public void sendAudioMessage(Action action) {
+        Action receiveAction = new Action(action.getAudioData(), action.getSender(), RECEIVE_AUDIO_MESSAGE, action.getList());
+
+        for (Participant p : getCallParticipants(action.getList())) {
+            try {
+                p.getObjectOutputStream().writeObject(receiveAction);
+                p.getObjectOutputStream().flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

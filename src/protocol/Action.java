@@ -49,6 +49,13 @@ public class Action implements Serializable {
         this.callID = callID;
     }
 
+    public Action(byte[] bytes, String name, int send_audio_message, ArrayList<String> callList) {
+        this.audioData = bytes;
+        this.sender = name;
+        this.cmd = send_audio_message;
+        this.peopleToCall = callList;
+    }
+
 
     public String getContent() {
         return content;
