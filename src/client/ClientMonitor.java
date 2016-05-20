@@ -521,6 +521,8 @@ public class ClientMonitor {
     }
 
     public void receiveAudioMessage(Action action) {
+        File dir = new File("Voicemail");
+        dir.mkdir();
         InputStream b_in = new ByteArrayInputStream(action.getAudioData());
         try {
             DataOutputStream dos = new DataOutputStream(new FileOutputStream("Voicemail/" + action.getSender() + ".bin"));
