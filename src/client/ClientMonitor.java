@@ -52,6 +52,7 @@ public class ClientMonitor {
     private final int SEND_AUDIO_DATA = 11;
     private final int RECIEVE_AUDIO_DATA = 12;
     private final int UPDATE_CLIENT_LIST = 13;
+    private final int RECEIVE_MESSAGE = 15;
 
 
     /**
@@ -474,5 +475,9 @@ public class ClientMonitor {
 //    public AudioMonitor getAudioMon(){
 //        return audioMon;
 //    }
+
+    public synchronized void receiveMessage(Action action){
+        
+    }
 }
 
