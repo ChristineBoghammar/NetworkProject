@@ -53,7 +53,6 @@ public class ClientMonitor {
     private final int RECEIVE_AUDIO_MESSAGE = 17;
 
 
-
     /**
      * Possible cmd's are:
      * 0 - Connect to server
@@ -478,7 +477,8 @@ public class ClientMonitor {
 
     private ByteArrayOutputStream audioMessage;
 
-    public void recordAudioMessage() {
+    public synchronized void recordAudioMessage() {
+        long time = System.currentTimeMillis();
         System.out.println("Started: ");
         DataLine.Info micInfo = new DataLine.Info(TargetDataLine.class, format);
         TargetDataLine mic = null;
@@ -494,7 +494,7 @@ public class ClientMonitor {
         byte tmpBuff[];
         assert mic != null;
         mic.start();
-        while ((mic.read((tmpBuff = new byte[mic.getBufferSize() / 5]), 0, tmpBuff.length)) > 0) {
+        while (((mic.read((tmpBuff = new byte[mic.getBufferSize() / 5]), 0, tmpBuff.length)) > 0) && ((System.currentTimeMillis() - time) < 5000)) {
             try {
                 audioMessage.write(tmpBuff);
                 System.out.println("skrivit ljud");
@@ -502,12 +502,14 @@ public class ClientMonitor {
                 e.printStackTrace();
             }
         }
+
+        sendAudioMessage();
     }
 
 
-    public void sendAudioMessage() {
+    public synchronized void sendAudioMessage() {
         System.out.println("Kom till sendAudioMessage");
-        Action sendAudioMessage = new Action(audioMessage.toByteArray(), getName(), SEND_AUDIO_MESSAGE,cgc.getSelectedList());
+        Action sendAudioMessage = new Action(audioMessage.toByteArray(), getName(), SEND_AUDIO_MESSAGE, cgc.getSelectedList());
         try {
             oos.writeObject(sendAudioMessage);
             oos.flush();
@@ -519,20 +521,23 @@ public class ClientMonitor {
     }
 
     public void receiveAudioMessage(Action action) {
-        File someFile = new File(action.getSender() + ".wav");
-        System.out.println("Received a voicemail from " + action.getSender());
-        FileOutputStream fos = null;
+        InputStream b_in = new ByteArrayInputStream(action.getAudioData());
         try {
-            fos = new FileOutputStream(someFile);
-            fos.write(action.getAudioData());
-            fos.flush();
-            fos.close();
+            DataOutputStream dos = new DataOutputStream(new FileOutputStream("Voicemail/" + action.getSender() + ".bin"));
+            dos.write(action.getAudioData());
+            AudioFormat format = new AudioFormat(8000f, 16, 1, true, false);
+            AudioInputStream stream = new AudioInputStream(b_in, format,
+                    action.getAudioData().length);
+            File file = new File("Voicemail/" + action.getSender() + ".wav");
+            AudioSystem.write(stream, AudioFileFormat.Type.WAVE, file);
+
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
 }
 
 

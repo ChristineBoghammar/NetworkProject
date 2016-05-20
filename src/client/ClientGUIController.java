@@ -76,16 +76,14 @@ public class ClientGUIController implements Initializable {
                 }
             }
         });
-
+        boolean recording = false;
         recordButton.setOnAction(new EventHandler<ActionEvent>() {
+            ArrayList<String> sendToList = new ArrayList<>();
             @Override
             public void handle(ActionEvent event) {
                 System.out.println("Tryckte på recordButton");
-                if(callList.size() > 0){
-//                    byte[] audio = new byte[];
-                    recordAudio();
-//                    mon.putAction(new Action());
-                }
+                recordAudio();
+
             }
         });
 
@@ -94,7 +92,7 @@ public class ClientGUIController implements Initializable {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                 ArrayList<String> temp = new ArrayList<String>();
-                for(Object o :connectedContacts.getSelectionModel().getSelectedItems()){
+                for(Object o : connectedContacts.getSelectionModel().getSelectedItems()){
                     temp.add((String) o);
                 }
                 callList = temp;
@@ -109,25 +107,19 @@ public class ClientGUIController implements Initializable {
     private void recordAudio() {
 
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Recording call to following participants:");
+        alert.setTitle("Recording 5 second voicemail to following participants:");
         alert.setHeaderText(callList.toString());
-        alert.setContentText("Press 'Stop' to send the recording");
+        alert.setContentText("Press 'Start voicemail', after 5 seconds the voicemail will be sent");
 
-        ButtonType buttonTypeOne = new ButtonType("Stop");
+        ButtonType buttonTypeOne = new ButtonType("Start voicemail");
         alert.getButtonTypes().setAll(buttonTypeOne);
 
 
         Optional<ButtonType> result = alert.showAndWait();
-        mon.recordAudioMessage();
         if (result.get() == buttonTypeOne) {
-            System.out.println("Kom till stopButton");
-            mon.sendAudioMessage();
-        } else {
-            System.out.println("How did you get here?");
+            mon.recordAudioMessage();
         }
     }
-
-
 
     public void setLabelName(String name){
         labelName.setText(name);
