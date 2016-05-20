@@ -65,7 +65,7 @@ public class AudioWriter extends Thread {
 
     private AudioFormat getAudioFormat() {
         float sampleRate = 16000.0F;
-        int sampleSizeBits = 16;
+        int sampleSizeBits = 8;
         int channels = 1;
         boolean signed = true;
         boolean bigEndian = false;
